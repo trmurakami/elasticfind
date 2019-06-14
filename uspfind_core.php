@@ -240,8 +240,8 @@ class Requests
                 }
             }
 
-            $getSearchResult = implode(") AND (", $resultSearchTermsComplete);
-            $query["query"]["bool"]["must"]["query_string"]["query"] = "($getSearchResult)";
+            $getSearchResult = implode("\) AND \(", $resultSearchTermsComplete);
+            $query["query"]["bool"]["must"]["query_string"]["query"] = "\($getSearchResult\)";
         } 
 
         if (!empty($get['range'])) {
