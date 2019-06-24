@@ -13,12 +13,11 @@ class elasticsearch
      * Executa o commando get no Elasticsearch
      *
      * @param string   $_id               ID do documento.
-     * @param string   $type              Tipo de documento no índice do Elasticsearch
      * @param string[] $fields            Informa quais campos o sistema precisa retornar. Se nulo, o sistema retornará tudo.
      * @param string   $alternative_index Caso use indice alternativo
      *
      */
-    public static function elastic_get($_id, $type, $fields, $alternative_index = "")
+    public static function elasticGet($_id, $fields, $alternative_index = "")
     {
         global $index;
         global $client;
@@ -30,7 +29,6 @@ class elasticsearch
             $params["index"] = $index;
         }
 
-        $params["type"] = $type;
         $params["id"] = $_id;
         $params["_source"] = $fields;
 
@@ -41,13 +39,12 @@ class elasticsearch
     /**
      * Executa o commando search no Elasticsearch
      *
-     * @param string   $type   Tipo de documento no índice do Elasticsearch
      * @param string[] $fields Informa quais campos o sistema precisa retornar. Se nulo, o sistema retornará tudo.
      * @param int      $size   Quantidade de registros nas respostas
      * @param resource $body   Arquivo JSON com os parâmetros das consultas no Elasticsearch
      *
      */
-    public static function elastic_search($type, $fields, $size, $body, $alternative_index = "")
+    public static function elasticSearch($fields, $size, $body, $alternative_index = "")
     {
         global $index;
         global $client;
@@ -59,7 +56,6 @@ class elasticsearch
             $params["index"] = $index;
         }
 
-        $params["type"] = $type;
         $params["_source"] = $fields;
         $params["size"] = $size;
         $params["body"] = $body;
@@ -72,11 +68,10 @@ class elasticsearch
      * Executa o commando update no Elasticsearch
      *
      * @param string   $_id  ID do documento
-     * @param string   $type Tipo de documento no índice do Elasticsearch
      * @param resource $body Arquivo JSON com os parâmetros das consultas no Elasticsearch
      *
      */
-    public static function elastic_update($_id, $type, $body, $alternative_index = "")
+    public static function elasticUpdate($_id, $body, $alternative_index = "")
     {
         global $index;
         global $client;
@@ -88,7 +83,6 @@ class elasticsearch
             $params["index"] = $index;
         }
 
-        $params["type"] = $type;
         $params["id"] = $_id;
         $params["body"] = $body;
 
@@ -100,10 +94,9 @@ class elasticsearch
      * Executa o commando delete no Elasticsearch
      *
      * @param string $_id  ID do documento
-     * @param string $type Tipo de documento no índice do Elasticsearch
      *
      */
-    public static function elastic_delete($_id, $type, $alternative_index = "")
+    public static function elasticDelete($_id, $alternative_index = "")
     {
         global $index;
         global $client;
@@ -115,7 +108,6 @@ class elasticsearch
             $params["index"] = $index;
         }
 
-        $params["type"] = $type;
         $params["id"] = $_id;
         $params["client"]["ignore"] = 404;
 
@@ -127,11 +119,10 @@ class elasticsearch
      * Executa o commando delete_by_query no Elasticsearch
      *
      * @param string   $_id  ID do documento
-     * @param string   $type Tipo de documento no índice do Elasticsearch
      * @param resource $body Arquivo JSON com os parâmetros das consultas no Elasticsearch
      *
      */
-    public static function elastic_delete_by_query($_id, $type, $body, $alternative_index = "")
+    public static function elasticDeleteByQuery($_id, $body, $alternative_index = "")
     {
         global $index;
         global $client;
@@ -143,7 +134,6 @@ class elasticsearch
             $params["index"] = $index;
         }
 
-        $params["type"] = $type;
         $params["id"] = $_id;
         $params["body"] = $body;
 
@@ -155,13 +145,12 @@ class elasticsearch
      * Executa o commando update no Elasticsearch e retorna uma resposta em html
      *
      * @param string   $_id  ID do documento
-     * @param string   $type Tipo de documento no índice do Elasticsearch
      * @param resource $body Arquivo JSON com os parâmetros das consultas no Elasticsearch
      *
      */
-    static function store_record($_id, $type, $body)
+    static function storeRecord($_id, $body)
     {
-        $response = elasticsearch::elastic_update($_id, $type, $body);
+        $response = elasticsearch::elasticUpdate($_id, $body);
         echo '<br/>Resultado: '.($response["_id"]).', '.($response["result"]).', '.($response["_shards"]['successful']).'<br/>';
 
     }
