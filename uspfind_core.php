@@ -211,13 +211,15 @@ class Requests
         }
 
         if (!empty($get['search'])) {
+
             $resultSearchTermsComplete = [];
             foreach ($get['search'] as $getSearch) {
                 if (strpos($getSearch, 'base.keyword') !== false) {
                     $query["query"]["bool"]["filter"][$i_filter]["term"]["base.keyword"] = "Produção científica";
                     $i_filter++;
+                } elseif (empty($getSearch)) {
+                    $query["query"]["bool"]["must"]["query_string"]["query"] = "*";
                 } else {
-
                     if (preg_match_all('/"([^"]+)"/', $getSearch, $multipleWords)) {
                         //Result is storaged in $multipleWords
                     }
@@ -226,11 +228,12 @@ class Requests
                     $resultSearchTerms = array_merge($multipleWords[1], $parsedRest);
                     $resultSearchTerms = array_filter($resultSearchTerms);
                     $resultSearchTermsComplete = array_merge($resultSearchTermsComplete, $resultSearchTerms);
+                    $getSearchResult = implode("\) AND \(", $resultSearchTermsComplete);
+                    $query["query"]["bool"]["must"]["query_string"]["query"] = "\($getSearchResult\)";
                 }
             }
 
-            $getSearchResult = implode("\) AND \(", $resultSearchTermsComplete);
-            $query["query"]["bool"]["must"]["query_string"]["query"] = "\($getSearchResult\)";
+
         } 
 
         if (!empty($get['range'])) {
@@ -244,7 +247,7 @@ class Requests
         //$query["query"]["bool"]["must"]["query_string"]["default_operator"] = "AND";
         $query["query"]["bool"]["must"]["query_string"]["analyzer"] = "portuguese";
         $query["query"]["bool"]["must"]["query_string"]["phrase_slop"] = 10;
-
+        
         return compact('page', 'query', 'limit', 'skip');
     }
 
