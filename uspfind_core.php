@@ -579,10 +579,9 @@ class Citation
             }
         }
 
-
         $json = json_encode($array_citation);
         $data = json_decode($json);
-        return $data;
+        return array($data);
     }
 
 }
