@@ -347,7 +347,7 @@ class Facets
                 
             }
 
-            echo '<a href="#'.str_replace(".", "_", $field).'" style="color:#333" uk-toggle>mais >></a>';
+            echo '<a href="#'.str_replace(".", "_", $field).'" uk-toggle>mais >></a>';
             echo   '</ul></li>';
 
 
