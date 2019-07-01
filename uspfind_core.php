@@ -153,7 +153,7 @@ class Elasticsearch
      */
     static function storeRecord($_id, $body)
     {
-        $response = Elasticsearch::elasticUpdate($_id, $body);
+        $response = Elasticsearch::update($_id, $body);
         echo '<br/>Resultado: '.($response["_id"]).', '.($response["result"]).', '.($response["_shards"]['successful']).'<br/>';
 
     }
