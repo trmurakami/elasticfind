@@ -836,7 +836,7 @@ class DSpaceREST
         curl_close($ch);
     }
 
-    static function addBitstreamPolicyDSpace($bitstreamID, $policyAction, $groupId, $resourceType, $rpType, $DSpaceCookies)
+    static function addBitstreamPolicyDSpace($bitstreamID, $policyAction, $groupId, $resourceType, $rpType, $DSpaceCookies, $embargoEndDate = "")
     {
         global $dspaceRest;
         $policyArray["action"] =  $policyAction;
@@ -847,7 +847,7 @@ class DSpaceREST
         $policyArray["rpDescription"] =  "";
         $policyArray["rpName"] =  "";
         $policyArray["rpType"] =  $rpType;
-        $policyArray["startDate"] =  "";
+        $policyArray["startDate"] =  "$embargoEndDate";
         $policyArray["endDate"] =  "";
         $data_string = json_encode($policyArray);
         $ch = curl_init();
@@ -868,26 +868,26 @@ class DSpaceREST
         curl_close($ch);
     }
 
-    static function getBitstreamRestrictedDSpace($bitstreamID, $DSpaceCookies)
-    {
-        global $dspaceRest;
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "$dspaceRest/rest/bitstreams/$bitstreamID/retrieve/64171-196117-1-PB.pdf");
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-        if (!empty($DSpaceCookies)) {
-            curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-                "Cookie: $DSpaceCookies",
-                'Content-Type: application/json'
-                )
-            );
-        }
-        $output = curl_exec($ch);
-        var_dump($output);
-        //$result = json_decode($output, true);
-        return $result;
-        curl_close($ch);
-    }
+    // static function getBitstreamRestrictedDSpace($bitstreamID, $DSpaceCookies)
+    // {
+    //     global $dspaceRest;
+    //     $ch = curl_init();
+    //     curl_setopt($ch, CURLOPT_URL, "$dspaceRest/rest/bitstreams/$bitstreamID/retrieve/64171-196117-1-PB.pdf");
+    //     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    //     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
+    //     if (!empty($DSpaceCookies)) {
+    //         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    //             "Cookie: $DSpaceCookies",
+    //             'Content-Type: application/json'
+    //             )
+    //         );
+    //     }
+    //     $output = curl_exec($ch);
+    //     var_dump($output);
+    //     //$result = json_decode($output, true);
+    //     return $result;
+    //     curl_close($ch);
+    // }
 
     static function createItemDSpace($dataString,$collection,$DSpaceCookies)
     {
@@ -930,7 +930,6 @@ class DSpaceREST
     static function addBitstreamDSpace($uuid, $file, $userBitstream, $DSpaceCookies)
     {
         global $dspaceRest;
-        print_r($file);
         $filename = rawurlencode($file["file"]["name"]);
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "$dspaceRest/rest/items/$uuid/bitstreams?name=$filename&description=$userBitstream");
