@@ -836,7 +836,7 @@ class DSpaceREST
         curl_close($ch);
     }
 
-    static function addBitstreamPolicyDSpace($bitstreamID, $policyAction, $groupId, $resourceType, $rpType, $DSpaceCookies, $embargoEndDate = "")
+    static function addBitstreamPolicyDSpace($bitstreamID, $policyAction, $groupId, $resourceType, $rpType, $DSpaceCookies, $embargoStartDate = "", $embargoEndDate = "")
     {
         global $dspaceRest;
         $policyArray["action"] =  $policyAction;
@@ -847,8 +847,8 @@ class DSpaceREST
         $policyArray["rpDescription"] =  "";
         $policyArray["rpName"] =  "";
         $policyArray["rpType"] =  $rpType;
-        $policyArray["startDate"] =  "$embargoEndDate";
-        $policyArray["endDate"] =  "";
+        $policyArray["startDate"] =  "$embargoStartDate";
+        $policyArray["endDate"] =  "$embargoEndDate";
         $data_string = json_encode($policyArray);
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, "$dspaceRest/rest/bitstreams/$bitstreamID/policy");
