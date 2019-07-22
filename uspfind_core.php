@@ -262,6 +262,7 @@ class Facets
 {
     public function facet($field, $size, $field_name, $sort, $sort_type, $get_search, $open = false)
     {
+        global $url_base;
         $query = $this->query;
         $query["aggs"]["counts"]["terms"]["field"] = "$field.keyword";
         if (!empty($_SESSION['oauthuserdata'])) {
@@ -395,6 +396,7 @@ class Facets
                 }
             };
             echo '</ul>';
+            echo '<p><a href="'.$url_base.'/tools/export.php?format=field&field='.$field.'">Exportar valores da faceta</a></p>';
             echo '
             </div>
             <div class="uk-modal-footer uk-text-right">
