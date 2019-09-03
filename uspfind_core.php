@@ -224,11 +224,11 @@ class Requests
                 } elseif (empty($getSearch)) {
                     $query["query"]["bool"]["must"]["query_string"]["query"] = "*";
                 } else {
-                    $getSearchClean = $antiXss->xss_clean($getSearch);
-                    if (preg_match_all('/"([^"]+)"/', $getSearchClean, $multipleWords)) {
+                    //$getSearchClean = $antiXss->xss_clean($getSearch);
+                    if (preg_match_all('/"([^"]+)"/', $getSearch, $multipleWords)) {
                         //Result is storaged in $multipleWords
                     }
-                    $queryRest = preg_replace('/"([^"]+)"/', "", $getSearchClean);
+                    $queryRest = preg_replace('/"([^"]+)"/', "", $getSearch);
                     $parsedRest = explode(' ', $queryRest);
                     $resultSearchTerms = array_merge($multipleWords[1], $parsedRest);
                     $resultSearchTerms = array_filter($resultSearchTerms);
