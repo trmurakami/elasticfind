@@ -158,6 +158,88 @@ class Elasticsearch
 
     }
 
+    /**
+     * Cria o indice
+     *
+     * @param string   $indexName  Nome do indice
+     *
+     */
+    static function createIndex($indexName, $client)
+    {
+        $createIndexParams = [
+            'index' => $indexName,
+            'body' => [
+                'settings' => [
+                    'number_of_shards' => 1,
+                    'number_of_replicas' => 0,
+                    'analysis' => [
+                        'filter' => [
+                            'portuguese_stop' => [
+                                'type' => 'stop',
+                                'stopwords' => 'portuguese'
+                            ],
+                            'my_ascii_folding' => [
+                                'type' => 'asciifolding',
+                                'preserve_original' => true
+                            ],
+                            'portuguese_stemmer' => [
+                                'type' => 'stemmer',
+                                'language' =>  'light_portuguese'
+                            ]
+                        ],
+                        'analyzer' => [
+                            'portuguese' => [
+                                'tokenizer' => 'standard',
+                                'filter' =>  [ 
+                                    'lowercase', 
+                                    'my_ascii_folding',
+                                    'portuguese_stop',
+                                    'portuguese_stemmer'
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $responseCreateIndex = $client->indices()->create($createIndexParams);
+    }
+    
+  
+    /**
+     * Cria o mapeamento
+     *
+     * @param string   $indexName  Nome do indice
+     *
+     */
+    static function mappingsIndex($indexName, $client)
+    {
+        // Set the index and type
+        $mappingsParams = [
+            'index' => $indexName,
+            'body' => [
+                'properties' => [
+                    'name' => [
+                        'type' => 'text',
+                        'analyzer' => 'portuguese',
+                        'fields' => [
+                            'keyword' => [
+                                'type' => 'keyword',
+                                'ignore_above' => 256
+                            ]
+                        ]
+                    ],                                                              
+                    'datePublished' => [
+                        'type' => 'integer'
+                    ]                                         
+                ]
+            ]
+        ];
+
+        // Update the index mapping
+        $client->indices()->putMapping($mappingsParams);
+    }      
+
 }
 
 class Requests
