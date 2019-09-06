@@ -212,30 +212,32 @@ class Elasticsearch
      * @param string   $indexName  Nome do indice
      *
      */
-    static function mappingsIndex($indexName, $client)
+    static function mappingsIndex($indexName, $client, $mappings = null)
     {
-        // Set the index and type
-        $mappingsParams = [
-            'index' => $indexName,
-            'body' => [
-                'properties' => [
-                    'name' => [
-                        'type' => 'text',
-                        'analyzer' => 'portuguese',
-                        'fields' => [
-                            'keyword' => [
-                                'type' => 'keyword',
-                                'ignore_above' => 256
+        if (isset($mappings)) {
+            $mappingsParams = $mappings;
+        } else {
+            $mappingsParams = [
+                'index' => $indexName,
+                'body' => [
+                    'properties' => [
+                        'name' => [
+                            'type' => 'text',
+                            'analyzer' => 'portuguese',
+                            'fields' => [
+                                'keyword' => [
+                                    'type' => 'keyword',
+                                    'ignore_above' => 256
+                                ]
                             ]
-                        ]
-                    ],                                                              
-                    'datePublished' => [
-                        'type' => 'integer'
-                    ]                                         
+                        ], 
+                        'datePublished' => [
+                            'type' => 'integer'
+                        ]                                         
+                    ]
                 ]
-            ]
-        ];
-
+            ];
+        }
         // Update the index mapping
         $client->indices()->putMapping($mappingsParams);
     }      
