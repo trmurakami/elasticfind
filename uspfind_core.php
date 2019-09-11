@@ -347,6 +347,7 @@ class Facets
     public function facet($field, $size, $field_name, $sort, $sort_type, $get_search, $open = false)
     {
         global $url_base;
+
         $query = $this->query;
         $query["aggs"]["counts"]["terms"]["field"] = "$field.keyword";
         if (!empty($_SESSION['oauthuserdata'])) {
@@ -365,33 +366,24 @@ class Facets
 
         } elseif (($result_count != 0) && ($result_count < 5)) {
 
-            echo '<li class="uk-parent '.($open == true ? "uk-open" : "").'">';            
-            echo '<a href="#" style="color:#333">'.$field_name.'</a>';
-            echo '<ul class="uk-nav-sub">';
+            echo '<a href="#" class="list-group-item list-group-item-action active">'.$field_name.'</a>';
+            echo '<ul class="list-group list-group-flush">';
             foreach ($response["aggregations"]["counts"]["buckets"] as $facets) {
                 if ($facets['key'] == "Não preenchido") {
                     echo '<li>';
                     echo '<div uk-grid>
                             <div class="uk-width-expand" style="color:#333">
-                                <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]=(-_exists_:'.$field.')">'.$facets['key'].'</a>
+                                <a href="result.php?'.$get_search.'&search[]=(-_exists_:'.$field.')">'.$facets['key'].'</a>
                             </div>
                             <div class="uk-width-auto" style="color:#333">
                                 <span class="uk-badge" style="font-size:80%">'.number_format($facets['doc_count'], 0, ',', '.').'</span>
                             </div>';
                     echo '</div></li>';
-                } else {                   
-                        echo '<li>';
-                        echo '<div uk-grid>
-                        <div class="uk-width-expand uk-text-small" style="color:#333">
-                            <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$facets['key'].'</a>
-                        </div>
-                        <div class="uk-width-auto" style="color:#333">
-                            <span class="uk-badge" style="font-size:80%">'.number_format($facets['doc_count'], 0, ',', '.').'</span>
-                        </div>
-                        <div class="uk-width-auto">
-                            <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&notFilter[]='.$field.':&quot;'.$facets['key'].'&quot;" title="Ocultar">-</a>
-                        </div>';
-                        echo '</div></li>';
+                } else {
+                        echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
+                        echo '<a href="result.php?'.$get_search.'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$facets['key'].'</a>
+                        <span class="badge badge-primary badge-pill">'.number_format($facets['doc_count'], 0, ',', '.').'</span>';
+                        echo '</li>'; 
                 }
 
             };
@@ -399,96 +391,59 @@ class Facets
 
         } else {
             $i = 0;
-            echo '<li class="uk-parent '.($open == true ? "uk-open" : "").'">';
-            echo '<a href="#" style="color:#333">'.$field_name.'</a>';
-            echo ' <ul class="uk-nav-sub">';
+            echo '<a href="#" class="list-group-item list-group-item-action active">'.$field_name.'</a>';
+            echo '<ul class="list-group list-group-flush">';  
             while ($i < 5) {
                 if ($response["aggregations"]["counts"]["buckets"][$i]['key'] == "Não preenchido") {
                     echo '<li>';
                     echo '<div uk-grid>
                             <div class="uk-width-expand uk-text-small" style="color:#333">
-                                <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]=(-_exists_:'.$field.')">'.$response["aggregations"]["counts"]["buckets"][$i]['key'].'</a>
+                                <a href="result.php?'.$get_search.'&search[]=(-_exists_:'.$field.')">'.$response["aggregations"]["counts"]["buckets"][$i]['key'].'</a>
                             </div>
                             <div class="uk-width-auto" style="color:#333">
                             <span class="uk-badge" style="font-size:80%">'.number_format($response["aggregations"]["counts"]["buckets"][$i]['doc_count'], 0, ',', '.').'</span>
                             </div>';
                     echo '</div></li>';
                 } else {
-                    echo '<li>';
-                    echo '<div uk-grid>
-                        <div class="uk-width-expand uk-text-small" style="color:#333">
-                            <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $response["aggregations"]["counts"]["buckets"][$i]['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$response["aggregations"]["counts"]["buckets"][$i]['key'].'</a>
-                        </div>
-                        <div class="uk-width-auto" style="color:#333">
-                            <span class="uk-badge" style="font-size:80%">'.number_format($response["aggregations"]["counts"]["buckets"][$i]['doc_count'], 0, ',', '.').'</span>
-                        </div>
-                        <div class="uk-width-auto" style="color:#333">
-                            <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&notFilter[]='.$field.':&quot;'.$response["aggregations"]["counts"]["buckets"][$i]['key'].'&quot;" title="Ocultar">-</a>
-                        </div>';
-                    echo '</div></li>';                    
+                    echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
+                    echo '<a href="result.php?'.$get_search.'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $response["aggregations"]["counts"]["buckets"][$i]['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$response["aggregations"]["counts"]["buckets"][$i]['key'].'</a>
+                    <span class="badge badge-primary badge-pill">'.number_format($response["aggregations"]["counts"]["buckets"][$i]['doc_count'], 0, ',', '.').'</span>';
+                    echo '</li>';                   
                 }
-                $i++;
-
-                
+                $i++;                
             }
 
-            echo '<a href="#'.str_replace(".", "_", $field).'" uk-toggle>mais >></a>';
-            echo   '</ul></li>';
 
-
-            echo '
-            <div id="'.str_replace(".", "_", $field).'" uk-modal="center: true">
-                <div class="uk-modal-dialog">
-                    <button class="uk-modal-close-default" type="button" uk-close></button>
-                    <div class="uk-modal-header">
-                        <h2 class="uk-modal-title">'.$field_name.'</h2>
-                    </div>
-                    <div class="uk-modal-body">
-                    <ul class="uk-list">
-            ';
-
-            foreach ($response["aggregations"]["counts"]["buckets"] as $facets) {
-                if ($facets['key'] == "Não preenchido") {
-                    echo '<li>';
-                    echo '<div uk-grid>
-                        <div class="uk-width-3-3 uk-text-small" style="color:#333"><a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]=-_exists_:'.$field.'">'.$facets['key'].' <span class="uk-badge">'.number_format($facets['doc_count'], 0, ',', '.').'</span></a></div>';
-                    echo '</div></li>';
-                } else {
-                    if ($facets['key'] == "Não preenchido") {
-                        echo '<li>';
-                        echo '<div uk-grid>
-                            <div class="uk-width-expand uk-text-small" style="color:#333">
-                                <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;">'.$facets['key'].'</a></div>
-                            <div class="uk-width-auto" style="color:#333">
-                            <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&notFilter[]='.$field.':&quot;'.$facets['key'].'&quot;">Ocultar</a>
-                            ';
-                        echo '</div></div></li>';
-                    } else {
-                        echo '<li><div uk-grid>
-                                <div class="uk-width-expand" style="color:#333">
-                                    <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;">'.$facets['key'].'</a></div>
-                                <div class="uk-width-auto" style="color:#333">
-                                    <span class="uk-badge">'.number_format($facets['doc_count'], 0, ',', '.').'</span>
-                                </div>
-                                <div class="uk-width-auto" style="color:#333" uk-tooltip="Ocultar">
-                                    <a href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&notFilter[]='.$field.':&quot;'.$facets['key'].'&quot;">-</a>
-                                </div>
-                            </div>
-                            </li>';
-                    }
-
-                }
-            };
+            echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
+            echo '<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#'.str_replace(".", "", $field).'Modal">mais >>></button>  ';
+            echo '</li>';
             echo '</ul>';
-            echo '<p><a href="'.$url_base.'/tools/export.php?format=field&field='.$field.'">Exportar valores da faceta</a></p>';
-            echo '
-            </div>
-            <div class="uk-modal-footer uk-text-right">
-                <button class="uk-button uk-button-default uk-modal-close" type="button">Fechar</button>
-            </div>
-            </div>
-            </div>
-            ';
+            echo '<div class="modal fade" id="'.str_replace(".", "", $field).'Modal" tabindex="-1" role="dialog" aria-labelledby="'.str_replace(".", "", $field).'ModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="'.$field.'ModalLabel">'.$field_name.'</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-group list-group-flush">';
+                    foreach ($response["aggregations"]["counts"]["buckets"] as $facets) {
+                        echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
+                        echo '<a href="result.php?'.$get_search.'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$facets['key'].'</a>
+                            <span class="badge badge-primary badge-pill">'.number_format($facets['doc_count'], 0, ',', '.').'</span>';
+                        echo '</li>';
+                    }
+            echo '</ul>';
+             echo '
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                </div>
+                </div>
+            </div></div></div>
+            ';         
+
 
         }
         echo '</li>';
@@ -681,42 +636,24 @@ class UI {
     static function pagination($page, $total, $limit, $t)
     {
 
-        echo '<div class="uk-child-width-expand@s uk-grid-divider" uk-grid>';
-        echo '<div>';
-        echo '<ul class="uk-pagination uk-flex-center">';
+        echo '<nav>';
+        echo '<ul class="pagination">';
         if ($page == 1) {
-            echo '<li><a href="#"><span class="uk-margin-small-right" uk-pagination-previous></span> '.$t->gettext('Anterior').'</a></li>';
+            echo '<li class="page-item disabled"><a class="page-link" href="#"> Anterior</a></li>';
         } else {
             $_GET["page"] = $page-1 ;
-            echo '<li><a href="'.http_build_query($_GET).'"><span class="uk-margin-small-right" uk-pagination-previous></span> '.$t->gettext('Anterior').'</a></li>';
+            echo '<li class="page-item"><a class="page-link" href="'.http_build_query($_GET).'"> Anterior</a></li>';
         }
-        echo '</ul>';
-        echo '</div>';
-        echo '<div>';
-        echo '<p class="uk-text-center">'.$t->gettext('Página ').''.number_format($page, 0, ',', '.') .'</p>';
-        echo '</div>';
-        echo '<div>';
-        echo '<p class="uk-text-center">'.number_format($total, 0, ',', '.') .'&nbsp;'. $t->gettext('registros').'</p>';
-        echo '</div>';
-        //echo '<div>';
-        //if (isset($_GET["sort"])) {
-        //    echo '<a href="http://'.$_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'].'?'.str_replace('&sort='.$_GET["sort"].'', "", $_SERVER['QUERY_STRING']).'">'.$t->gettext('Ordenar por Data').'</a>';
-        //} else {
-        //    echo '<a href="http://'.$_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'].'?'.$_SERVER['QUERY_STRING'].'&sort=name.keyword">'.$t->gettext('Ordenar por Título').'</a>';
-        //}
-        //echo '</div>';
-        echo '<div>';
-        echo '<ul class="uk-pagination uk-flex-center">';
+        echo '<li class="page-item disabled"><a class="page-link" href="#">Página '.number_format($page, 0, ',', '.') .'</a></li>';
+        echo '<li class="page-item disabled"><a class="page-link" href="#">'.number_format($total, 0, ',', '.') .'&nbsp;registros</a></li>';
         if ($total/$limit > $page) {
             $_GET["page"] = $page+1;
-            echo '<li class="uk-margin-auto-left"><a href="http://'.$_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'].'?'.http_build_query($_GET).'">'.$t->gettext('Próxima').' <span class="uk-margin-small-left" uk-pagination-next></span></a></li>';
+            echo '<li class="page-item"><a class="page-link" href="http://'.$_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'].'?'.http_build_query($_GET).'"> Próxima</a></li>';
         } else {
-            echo '<li class="uk-margin-auto-left"><a href="#">'.$t->gettext('Próxima').' <span class="uk-margin-small-left" uk-pagination-next></span></a></li>';
+            echo '<li class="page-item disabled"><a class="page-link" href="#">Próxima</a></li>';
         }
         echo '</ul>';
-        echo '</div>';
-        echo '</div>';
-
+        echo '</nav>';
     }
 }
 
