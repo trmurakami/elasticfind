@@ -323,7 +323,23 @@ class Requests
             }
 
 
-        } 
+        }
+        
+        if (!empty($get['initialYear']) || !empty($get['finalYear'])) {
+            if (!empty($get['initialYear'])) {
+                $initialYear = $get['initialYear'];
+            } else {
+                $initialYear = "*";
+            }
+
+            if (!empty($get['finalYear'])) {
+                $finalYear = $get['finalYear'];
+            } else {
+                $finalYear = "*";
+            }
+            $dateString = 'datePublished:['.$initialYear.' TO '.$finalYear.']';
+            $query["query"]["bool"]["must"]["query_string"]["query"] = $dateString;
+        }           
 
         if (!empty($get['range'])) {
             $query["query"]["bool"]["must"]["query_string"]["query"] = $get['range'][0];
