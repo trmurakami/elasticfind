@@ -655,18 +655,18 @@ class UI {
         echo '<nav>';
         echo '<ul class="list-group list-group-horizontal">';
         if ($page == 1) {
-            echo '<li class="list-group-item w-25 disabled"><a href="#"> Anterior</a></li>';
+            echo '<li class="list-group-item w-25 disabled">Anterior</li>';
         } else {
             $_GET["page"] = $page-1 ;
             echo '<li class="list-group-item w-25"><a href="result.php?'.http_build_query($_GET).'"> Anterior</a></li>';
         }
-        echo '<li class="list-group-item w-25 disabled"><a href="#">Página '.number_format($page, 0, ',', '.') .'</a></li>';
-        echo '<li class="list-group-item w-25 disabled"><a href="#">'.number_format($total, 0, ',', '.') .'&nbsp;registros</a></li>';
+        echo '<li class="list-group-item w-25 disabled">Página '.number_format($page, 0, ',', '.') .'</li>';
+        echo '<li class="list-group-item w-25 disabled">'.number_format($total, 0, ',', '.') .'&nbsp;registros</li>';
         if ($total/$limit > $page) {
             $_GET["page"] = $page+1;
             echo '<li class="list-group-item w-25"><a href="result.php?'.http_build_query($_GET).'"> Próxima</a></li>';
         } else {
-            echo '<li class="list-group-item w-25 disabled"><a href="#">Próxima</a></li>';
+            echo '<li class="list-group-item w-25 disabled">Próxima</li>';
         }
         echo '</ul>';
         echo '</nav>';
