@@ -653,20 +653,20 @@ class UI {
     {
 
         echo '<nav>';
-        echo '<ul class="pagination">';
+        echo '<ul class="list-group list-group-horizontal">';
         if ($page == 1) {
-            echo '<li class="page-item disabled"><a class="page-link" href="#"> Anterior</a></li>';
+            echo '<li class="list-group-item w-25 disabled"><a href="#"> Anterior</a></li>';
         } else {
             $_GET["page"] = $page-1 ;
-            echo '<li class="page-item"><a class="page-link" href="'.http_build_query($_GET).'"> Anterior</a></li>';
+            echo '<li class="list-group-item w-25"><a href="result.php?'.http_build_query($_GET).'"> Anterior</a></li>';
         }
-        echo '<li class="page-item disabled"><a class="page-link" href="#">Página '.number_format($page, 0, ',', '.') .'</a></li>';
-        echo '<li class="page-item disabled"><a class="page-link" href="#">'.number_format($total, 0, ',', '.') .'&nbsp;registros</a></li>';
+        echo '<li class="list-group-item w-25 disabled"><a href="#">Página '.number_format($page, 0, ',', '.') .'</a></li>';
+        echo '<li class="list-group-item w-25 disabled"><a href="#">'.number_format($total, 0, ',', '.') .'&nbsp;registros</a></li>';
         if ($total/$limit > $page) {
             $_GET["page"] = $page+1;
-            echo '<li class="page-item"><a class="page-link" href="http://'.$_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'].'?'.http_build_query($_GET).'"> Próxima</a></li>';
+            echo '<li class="list-group-item w-25"><a href="result.php?'.http_build_query($_GET).'"> Próxima</a></li>';
         } else {
-            echo '<li class="page-item disabled"><a class="page-link" href="#">Próxima</a></li>';
+            echo '<li class="list-group-item w-25 disabled"><a href="#">Próxima</a></li>';
         }
         echo '</ul>';
         echo '</nav>';
