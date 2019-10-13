@@ -248,8 +248,7 @@ class Requests
 {
 
     static function getParser($get)
-    {
-        global $antiXss;
+    {        
         $query = [];
 
         if (!empty($get['fields'])) {
@@ -396,10 +395,10 @@ class Facets
                             </div>';
                     echo '</div></li>';
                 } else {
-                        echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
-                        echo '<a href="result.php?'.$get_search.'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$facets['key'].'</a>
-                        <span class="badge badge-primary badge-pill">'.number_format($facets['doc_count'], 0, ',', '.').'</span>';
-                        echo '</li>'; 
+                    echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
+                    echo '<a href="result.php?search[]='.$get_search[0].'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$facets['key'].'</a>
+                    <span class="badge badge-primary badge-pill">'.number_format($facets['doc_count'], 0, ',', '.').'</span>';
+                    echo '</li>'; 
                 }
 
             };
@@ -422,7 +421,7 @@ class Facets
                     echo '</div></li>';
                 } else {
                     echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
-                    echo '<a href="result.php?'.$get_search.'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $response["aggregations"]["counts"]["buckets"][$i]['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$response["aggregations"]["counts"]["buckets"][$i]['key'].'</a>
+                    echo '<a href="result.php?search[]='.$get_search[0].'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $response["aggregations"]["counts"]["buckets"][$i]['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$response["aggregations"]["counts"]["buckets"][$i]['key'].'</a>
                     <span class="badge badge-primary badge-pill">'.number_format($response["aggregations"]["counts"]["buckets"][$i]['doc_count'], 0, ',', '.').'</span>';
                     echo '</li>';                   
                 }
@@ -525,7 +524,7 @@ class Facets
 
         //$query["aggs"]["counts"]["terms"]["size"] = $size;
 
-        $response = Elasticsearch::elasticSearch(null, 0, $query);
+        $response = Elasticsearch::search(null, 0, $query);
 
         $result_count = count($response["aggregations"]["ranges"]["buckets"]);
 
@@ -649,7 +648,7 @@ class Citation
 
 class UI {
    
-    static function pagination($page, $total, $limit, $t)
+    static function pagination($page, $total, $limit)
     {
 
         echo '<nav>';
