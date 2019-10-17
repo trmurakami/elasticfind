@@ -230,7 +230,59 @@ class Elasticsearch
                                     'ignore_above' => 256
                                 ]
                             ]
-                        ], 
+                        ],
+                        'author' => [
+                            'properties' => [
+                                'person' => [
+                                    'properties' => [
+                                        'name' => [
+                                            'type' => 'text',
+                                            'analyzer' => 'portuguese',
+                                            'fields' => [
+                                                'keyword' => [
+                                                    'type' => 'keyword',
+                                                    'ignore_above' => 256
+                                                ]
+                                            ]                                            
+                                        ]
+                                    ]
+                                ],
+                                'organization' => [
+                                    'properties' => [
+                                        'name' => [
+                                            'type' => 'text',
+                                            'analyzer' => 'portuguese',
+                                            'fields' => [
+                                                'keyword' => [
+                                                    'type' => 'keyword',
+                                                    'ignore_above' => 256
+                                                ]
+                                            ]                                            
+                                        ]
+                                    ]
+                                ]
+                            ]
+                        ],
+                        'source' => [
+                            'type' => 'text',
+                            'analyzer' => 'portuguese',
+                            'fields' => [
+                                'keyword' => [
+                                    'type' => 'keyword',
+                                    'ignore_above' => 256
+                                ]
+                            ]
+                        ],
+                        'about' => [
+                            'type' => 'text',
+                            'analyzer' => 'portuguese',
+                            'fields' => [
+                                'keyword' => [
+                                    'type' => 'keyword',
+                                    'ignore_above' => 256
+                                ]
+                            ]
+                        ],                                                
                         'datePublished' => [
                             'type' => 'integer'
                         ]                                         
@@ -254,7 +306,7 @@ class Requests
         if (!empty($get['fields'])) {
             $query["query"]["bool"]["must"]["query_string"]["fields"] = $get['fields'];
         } else {
-            $query["query"]["bool"]["must"]["query_string"]["default_field"] = "*";
+            $query["query"]["bool"]["must"]["query_string"]["fields"] = ["name", "author.person.name", "author.organization.name", "about", "source"];
         }
 
         /* codpes */
@@ -299,28 +351,18 @@ class Requests
 
         if (!empty($get['search'])) {
 
-            $resultSearchTermsComplete = [];
             foreach ($get['search'] as $getSearch) {
                 if (strpos($getSearch, 'base.keyword') !== false) {
                     $query["query"]["bool"]["filter"][$i_filter]["term"]["base.keyword"] = "Produção científica";
                     $i_filter++;
                 } elseif (empty($getSearch)) {
                     $query["query"]["bool"]["must"]["query_string"]["query"] = "*";
-                } else {
-                    //$getSearchClean = $antiXss->xss_clean($getSearch);
-                    if (preg_match_all('/"([^"]+)"/', $getSearch, $multipleWords)) {
-                        //Result is storaged in $multipleWords
-                    }
-                    $queryRest = preg_replace('/"([^"]+)"/', "", $getSearch);
-                    $parsedRest = explode(' ', $queryRest);
-                    $resultSearchTerms = array_merge($multipleWords[1], $parsedRest);
-                    $resultSearchTerms = array_filter($resultSearchTerms);
-                    $resultSearchTermsComplete = array_merge($resultSearchTermsComplete, $resultSearchTerms);
-                    $getSearchResult = implode("\) AND \(", $resultSearchTermsComplete);
-                    $query["query"]["bool"]["must"]["query_string"]["query"] = "\($getSearchResult\)";
+                } else {                
+                    $parsedRest = explode(" ", $getSearch);
+                    $getSearchResult = implode(" AND ", $parsedRest);
+                    $query["query"]["bool"]["must"]["query_string"]["query"] = "$getSearchResult";
                 }
             }
-
 
         }
         
@@ -350,7 +392,10 @@ class Requests
 
         //$query["query"]["bool"]["must"]["query_string"]["default_operator"] = "AND";
         $query["query"]["bool"]["must"]["query_string"]["analyzer"] = "portuguese";
-        $query["query"]["bool"]["must"]["query_string"]["phrase_slop"] = 10;
+        //$query["query"]["bool"]["must"]["query_string"]["phrase_slop"] = 10;
+
+        echo "<br/><br/><br/><br/><br/>";
+        print_r($query);
         
         return compact('page', 'query', 'limit', 'skip');
     }
