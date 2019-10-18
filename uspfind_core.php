@@ -304,9 +304,10 @@ class Requests
         $query = [];
 
         if (!empty($get['fields'])) {
-            $query["query"]["bool"]["must"]["query_string"]["fields"] = $get['fields'];
+            //$query["query"]["bool"]["must"]["query_string"]["fields"] = $get['fields'];
         } else {
-            $query["query"]["bool"]["must"]["query_string"]["fields"] = ["name", "author.person.name", "author.organization.name", "about", "source"];
+            //$query["query"]["bool"]["must"]["query_string"]["fields"] = ["name", "author.person.name", "author.organization.name", "about", "source"];
+            //$query["query"]["bool"]["must"]["query_string"]["default_field"] = "*";
         }
 
         /* codpes */
@@ -352,15 +353,12 @@ class Requests
         if (!empty($get['search'])) {
 
             foreach ($get['search'] as $getSearch) {
-                if (strpos($getSearch, 'base.keyword') !== false) {
-                    $query["query"]["bool"]["filter"][$i_filter]["term"]["base.keyword"] = "Produção científica";
-                    $i_filter++;
-                } elseif (empty($getSearch)) {
-                    $query["query"]["bool"]["must"]["query_string"]["query"] = "*";
+                if (empty($getSearch)) {
+                    $query["query"]["query_string"]["query"] = "*";
                 } else {                
                     $parsedRest = explode(" ", $getSearch);
-                    $getSearchResult = implode(" AND ", $parsedRest);
-                    $query["query"]["bool"]["must"]["query_string"]["query"] = "$getSearchResult";
+                    $getSearchResult = implode(") OR (", $parsedRest);
+                    $query["query"]["query_string"]["query"] = "($getSearchResult)";
                 }
             }
 
@@ -386,17 +384,23 @@ class Requests
             $query["query"]["bool"]["must"]["query_string"]["query"] = $get['range'][0];
         }         
         
-        if (!isset($query["query"]["bool"]["must"]["query_string"]["query"])) {
-            $query["query"]["bool"]["must"]["query_string"]["query"] = "*";
+        if (!isset($query["query"]["query_string"]["query"])) {
+            $query["query"]["query_string"]["query"] = "*";
         }
 
-        //$query["query"]["bool"]["must"]["query_string"]["default_operator"] = "AND";
-        $query["query"]["bool"]["must"]["query_string"]["analyzer"] = "portuguese";
-        //$query["query"]["bool"]["must"]["query_string"]["phrase_slop"] = 10;
+        $query["query"]["query_string"]["analyzer"] = "portuguese";
 
-        echo "<br/><br/><br/><br/><br/>";
-        print_r($query);
+        if (isset($query["query"]["bool"])) {
+            $query["query"]["bool"]["must"]["query_string"]["query"] = $query["query"]["query_string"]["query"];
+            $query["query"]["bool"]["must"]["query_string"]["analyzer"] = "portuguese";
+            unset($query["query"]["query_string"]["query"]);
+            unset($query["query"]["query_string"]);
+        }        
+
+        //$query["query"]["bool"]["must"]["query_string"]["default_operator"] = "AND";
         
+        //$query["query"]["bool"]["must"]["query_string"]["phrase_slop"] = 10;
+       
         return compact('page', 'query', 'limit', 'skip');
     }
 
