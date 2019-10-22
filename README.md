@@ -1,2 +1,2 @@
-# uspfind_core
+# elasticfind
 Core functions to Finder 
