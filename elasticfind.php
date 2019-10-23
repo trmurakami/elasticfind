@@ -716,7 +716,8 @@ class UI {
 
 
 class Authorities {
-    static function tematres($term, $tematres_url)
+
+    public static function tematresQuery($term, $tematresWebServicesUrl)
     {
         // Clean term
         $term = preg_replace("/\s+/", " ", $term);
@@ -728,18 +729,16 @@ class Authorities {
         $clean_term_p = $term;
         $clean_term = str_replace("%C2%A0", "%20", $clean_term);
         $clean_term = str_replace("&", "e", $clean_term);
-
         // Query tematres
         $ch = curl_init();
         $method = "GET";
-        $url = ''.$tematres_url.'?task=fetch&arg='.$clean_term.'&output=json';
+        $url = ''.$tematresWebServicesUrl.'?task=fetch&arg='.$clean_term.'&output=json';
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
         $result_get_id_tematres = curl_exec($ch);
         $resultado_get_id_tematres = json_decode($result_get_id_tematres, true);
         curl_close($ch);
-
         // Get correct term
         if ($resultado_get_id_tematres["resume"]["cant_result"] != 0) {
             foreach ($resultado_get_id_tematres["result"] as $key => $val) {
@@ -747,19 +746,18 @@ class Authorities {
             }
             $ch = curl_init();
             $method = "GET";
-            $url = ''.$tematres_url.'?task=fetchTerm&arg='.$term_key.'&output=json';
+            $url = ''.$tematresWebServicesUrl.'?task=fetchTerm&arg='.$term_key.'&output=json';
             curl_setopt($ch, CURLOPT_URL, $url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, strtoupper($method));
             $result_term = curl_exec($ch);
             $resultado_term = json_decode($result_term, true);
-            $found_term = $resultado_term["result"]["term"]["string"];
-            $term_not_found = "";
+            $foundTerm = $resultado_term["result"]["term"]["string"];
+            $termNotFound = "ND";
             curl_close($ch);
-
             $ch_country = curl_init();
             $method = "GET";
-            $url_country = ''.$tematres_url.'?task=fetchUp&arg='.$term_key.'&output=json';
+            $url_country = ''.$tematresWebServicesUrl.'?task=fetchUp&arg='.$term_key.'&output=json';
             curl_setopt($ch_country, CURLOPT_URL, $url_country);
             curl_setopt($ch_country, CURLOPT_RETURNTRANSFER, 1);
             curl_setopt($ch_country, CURLOPT_CUSTOMREQUEST, strtoupper($method));
@@ -767,18 +765,17 @@ class Authorities {
             $resultado_country = json_decode($result_country, true);
             foreach ($resultado_country["result"] as $country_list) {
                 if ($country_list["order"] == 1) {
-                    $country = $country_list["string"];
+                    $topTerm = $country_list["string"];
                 }
             }
             curl_close($ch_country);
-
         } else {
-            $term_not_found = $clean_term_p;
-            $found_term = "";
-            $country = "ND";
+            $termNotFound = $clean_term_p;
+            $foundTerm = "ND";
+            $topTerm = "ND";
         }
-        return compact('found_term', 'term_not_found', 'country');
-    }
+        return compact('foundTerm', 'termNotFound', 'topTerm');
+    } 
 }
 
 /**
