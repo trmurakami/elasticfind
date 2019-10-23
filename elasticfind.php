@@ -303,18 +303,6 @@ class Requests
     {        
         $query = [];
 
-        if (!empty($get['fields'])) {
-            //$query["query"]["bool"]["must"]["query_string"]["fields"] = $get['fields'];
-        } else {
-            //$query["query"]["bool"]["must"]["query_string"]["fields"] = ["name", "author.person.name", "author.organization.name", "about", "source"];
-            //$query["query"]["bool"]["must"]["query_string"]["default_field"] = "*";
-        }
-
-        /* codpes */
-        if (!empty($get['codpes'])) {
-            $get['search'][] = 'authorUSP.codpes:'.$get['codpes'].'';
-        }
-
         /* Pagination */
         if (isset($get['page'])) {
             $page = $get['page'];
@@ -352,15 +340,13 @@ class Requests
 
         if (!empty($get['search'])) {
 
-            foreach ($get['search'] as $getSearch) {
-                if (empty($getSearch)) {
-                    $query["query"]["query_string"]["query"] = "*";
-                } else {                
-                    $parsedRest = explode(" ", $getSearch);
-                    $getSearchResult = implode(") OR (", $parsedRest);
-                    $query["query"]["query_string"]["query"] = "($getSearchResult)";
-                }
-            }
+            $queryArray["multi_match"]["query"] = $get['search'];
+            $queryArray["multi_match"]["type"] = "cross_fields";
+            $queryArray["multi_match"]["fields"] = ["name", "author.person.name", "author.organization.name", "about", "source"];
+            $queryArray["multi_match"]["operator"] = "and";
+                    
+        } else { 
+            $queryArray["query_string"]["query"] = "*";             
 
         }
         
@@ -384,22 +370,13 @@ class Requests
             $query["query"]["bool"]["must"]["query_string"]["query"] = $get['range'][0];
         }         
         
-        if (!isset($query["query"]["query_string"]["query"])) {
-            $query["query"]["query_string"]["query"] = "*";
-        }
-
-        $query["query"]["query_string"]["analyzer"] = "portuguese";
-
         if (isset($query["query"]["bool"])) {
-            $query["query"]["bool"]["must"]["query_string"]["query"] = $query["query"]["query_string"]["query"];
-            $query["query"]["bool"]["must"]["query_string"]["analyzer"] = "portuguese";
-            unset($query["query"]["query_string"]["query"]);
-            unset($query["query"]["query_string"]);
+            $query["query"]["bool"]["must"] = $queryArray;
+        } else {
+            $query["query"] = $queryArray;
         }        
 
-        //$query["query"]["bool"]["must"]["query_string"]["default_operator"] = "AND";
-        
-        //$query["query"]["bool"]["must"]["query_string"]["phrase_slop"] = 10;
+        //print("<pre>".print_r($query, true)."</pre>");
        
         return compact('page', 'query', 'limit', 'skip');
     }
@@ -437,7 +414,7 @@ class Facets
                     echo '<li>';
                     echo '<div uk-grid>
                             <div class="uk-width-expand" style="color:#333">
-                                <a href="result.php?'.$get_search[0].'&search[]=(-_exists_:'.$field.')">'.$facets['key'].'</a>
+                                <a href="result.php?'.$get_search.'&search=(-_exists_:'.$field.')">'.$facets['key'].'</a>
                             </div>
                             <div class="uk-width-auto" style="color:#333">
                                 <span class="uk-badge" style="font-size:80%">'.number_format($facets['doc_count'], 0, ',', '.').'</span>
@@ -445,7 +422,7 @@ class Facets
                     echo '</div></li>';
                 } else {
                     echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
-                    echo '<a href="result.php?search[]='.$get_search[0].'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$facets['key'].'</a>
+                    echo '<a href="result.php?search='.$get_search.'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$facets['key'].'</a>
                     <span class="badge badge-primary badge-pill">'.number_format($facets['doc_count'], 0, ',', '.').'</span>';
                     echo '</li>'; 
                 }
@@ -462,7 +439,7 @@ class Facets
                     echo '<li>';
                     echo '<div uk-grid>
                             <div class="uk-width-expand uk-text-small" style="color:#333">
-                                <a href="result.php?'.$get_search[0].'&search[]=(-_exists_:'.$field.')">'.$response["aggregations"]["counts"]["buckets"][$i]['key'].'</a>
+                                <a href="result.php?'.$get_search.'&search=(-_exists_:'.$field.')">'.$response["aggregations"]["counts"]["buckets"][$i]['key'].'</a>
                             </div>
                             <div class="uk-width-auto" style="color:#333">
                             <span class="uk-badge" style="font-size:80%">'.number_format($response["aggregations"]["counts"]["buckets"][$i]['doc_count'], 0, ',', '.').'</span>
@@ -470,7 +447,7 @@ class Facets
                     echo '</div></li>';
                 } else {
                     echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
-                    echo '<a href="result.php?search[]='.$get_search[0].'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $response["aggregations"]["counts"]["buckets"][$i]['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$response["aggregations"]["counts"]["buckets"][$i]['key'].'</a>
+                    echo '<a href="result.php?search='.$get_search.'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $response["aggregations"]["counts"]["buckets"][$i]['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$response["aggregations"]["counts"]["buckets"][$i]['key'].'</a>
                     <span class="badge badge-primary badge-pill">'.number_format($response["aggregations"]["counts"]["buckets"][$i]['doc_count'], 0, ',', '.').'</span>';
                     echo '</li>';                   
                 }
@@ -495,7 +472,7 @@ class Facets
                     <ul class="list-group list-group-flush">';
                     foreach ($response["aggregations"]["counts"]["buckets"] as $facets) {
                         echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
-                        echo '<a href="result.php?'.$get_search[0].'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$facets['key'].'</a>
+                        echo '<a href="result.php?'.$get_search.'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$facets['key'].'</a>
                             <span class="badge badge-primary badge-pill">'.number_format($facets['doc_count'], 0, ',', '.').'</span>';
                         echo '</li>';
                     }
@@ -586,7 +563,7 @@ class Facets
                 echo '<li>
                     <div uk-grid>
                     <div class="uk-width-3-3 uk-text-small" style="color:#333">';
-                    echo '<a style="color:#333" href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search[]='.$field.':['.$facets_array[0].' TO '.$facets_array[1].']">Intervalo '.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a>';
+                    echo '<a style="color:#333" href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search='.$field.':['.$facets_array[0].' TO '.$facets_array[1].']">Intervalo '.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a>';
                     echo '</div>';
 
                 echo '</div></li>';
