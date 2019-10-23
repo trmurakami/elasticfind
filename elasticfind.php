@@ -284,8 +284,21 @@ class Elasticsearch
                             ]
                         ],                                                
                         'datePublished' => [
-                            'type' => 'integer'
-                        ]                                         
+                            'type' => 'integer',
+                            'fields' => [
+                                'keyword' => [
+                                    'type' => 'keyword',
+                                    'ignore_above' => 256
+                                ]
+                            ]
+                        ],
+                        'facebook' => [
+                            'properties' => [
+                                'facebook_total' => [
+                                    'type' => 'integer'
+                                ]
+                            ]
+                        ]                                      
                     ]
                 ]
             ];
@@ -377,8 +390,8 @@ class Requests
             $query["query"] = $queryArray;
         }        
 
-        echo "<br/><br/><br/>";
-        print("<pre>".print_r($query, true)."</pre>");
+        //echo "<br/><br/><br/>";
+        //print("<pre>".print_r($query, true)."</pre>");
        
         return compact('page', 'query', 'limit', 'skip');
     }
