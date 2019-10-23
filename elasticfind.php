@@ -176,7 +176,7 @@ class Elasticsearch
                         'filter' => [
                             'portuguese_stop' => [
                                 'type' => 'stop',
-                                'stopwords' => 'portuguese'
+                                'stopwords' => '_portuguese_'
                             ],
                             'my_ascii_folding' => [
                                 'type' => 'asciifolding',
@@ -188,7 +188,7 @@ class Elasticsearch
                             ]
                         ],
                         'analyzer' => [
-                            'portuguese' => [
+                            'rebuilt_portuguese' => [
                                 'tokenizer' => 'standard',
                                 'filter' =>  [ 
                                     'lowercase', 
@@ -340,10 +340,11 @@ class Requests
 
         if (!empty($get['search'])) {
 
-            $queryArray["multi_match"]["query"] = $get['search'];
-            $queryArray["multi_match"]["type"] = "cross_fields";
-            $queryArray["multi_match"]["fields"] = ["name", "author.person.name", "author.organization.name", "about", "source"];
-            $queryArray["multi_match"]["operator"] = "and";
+            $queryArray["query_string"]["query"] = $get['search'];
+            //$queryArray["multi_match"]["type"] = "best_fields";            
+            $queryArray["query_string"]["fields"] = ["name", "author.person.name", "author.organization.name", "about", "source"];
+            //$queryArray["multi_match"]["operator"] = "and";
+            //$queryArray["query_string"]["analyzer"] = "portuguese";
                     
         } else { 
             $queryArray["query_string"]["query"] = "*";             
@@ -371,12 +372,13 @@ class Requests
         }         
         
         if (isset($query["query"]["bool"])) {
-            $query["query"]["bool"]["must"] = $queryArray;
+            $query["query"]["bool"]["should"] = $queryArray;
         } else {
             $query["query"] = $queryArray;
         }        
 
-        //print("<pre>".print_r($query, true)."</pre>");
+        echo "<br/><br/><br/>";
+        print("<pre>".print_r($query, true)."</pre>");
        
         return compact('page', 'query', 'limit', 'skip');
     }
