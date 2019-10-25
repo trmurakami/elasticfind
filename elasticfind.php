@@ -292,7 +292,11 @@ class Elasticsearch
                                     'ignore_above' => 256
                                 ]
                             ]
-                        ],                                                
+                        ],
+                        'description' => [
+                            'type' => 'text',
+                            'analyzer' => 'portuguese'
+                        ],                                                                         
                         'datePublished' => [
                             'type' => 'integer',
                             'fields' => [
@@ -365,7 +369,7 @@ class Requests
 
             $queryArray["query_string"]["query"] = $get['search'];
             //$queryArray["multi_match"]["type"] = "best_fields";            
-            $queryArray["query_string"]["fields"] = ["name", "alternateName", "author.person.name", "author.organization.name", "about", "source"];
+            $queryArray["query_string"]["fields"] = ["name", "alternateName", "author.person.name", "author.organization.name", "about", "source", "description"];
             //$queryArray["multi_match"]["operator"] = "and";
             //$queryArray["query_string"]["analyzer"] = "portuguese";
                     
