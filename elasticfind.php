@@ -418,6 +418,10 @@ class Facets
     {
         global $url_base;
 
+        if (isset($get_search["page"])) {
+            unset($get_search["page"]);            
+        }
+
         $query = $this->query;
         $query["aggs"]["counts"]["terms"]["field"] = "$field.keyword";
         if (!empty($_SESSION['oauthuserdata'])) {
@@ -443,7 +447,7 @@ class Facets
                     echo '<li>';
                     echo '<div uk-grid>
                             <div class="uk-width-expand" style="color:#333">
-                                <a href="result.php?'.$get_search.'&search=(-_exists_:'.$field.')">'.$facets['key'].'</a>
+                                <a href="result.php?'.http_build_query($get_search).'&search=(-_exists_:'.$field.')">'.$facets['key'].'</a>
                             </div>
                             <div class="uk-width-auto" style="color:#333">
                                 <span class="uk-badge" style="font-size:80%">'.number_format($facets['doc_count'], 0, ',', '.').'</span>
@@ -451,7 +455,7 @@ class Facets
                     echo '</div></li>';
                 } else {
                     echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
-                    echo '<a href="result.php?search='.$get_search.'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$facets['key'].'</a>
+                    echo '<a href="result.php?'.http_build_query($get_search).'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$facets['key'].'</a>
                     <span class="badge badge-primary badge-pill">'.number_format($facets['doc_count'], 0, ',', '.').'</span>';
                     echo '</li>'; 
                 }
@@ -468,7 +472,7 @@ class Facets
                     echo '<li>';
                     echo '<div uk-grid>
                             <div class="uk-width-expand uk-text-small" style="color:#333">
-                                <a href="result.php?'.$get_search.'&search=(-_exists_:'.$field.')">'.$response["aggregations"]["counts"]["buckets"][$i]['key'].'</a>
+                                <a href="result.php?'.http_build_query($get_search).'&search=(-_exists_:'.$field.')">'.$response["aggregations"]["counts"]["buckets"][$i]['key'].'</a>
                             </div>
                             <div class="uk-width-auto" style="color:#333">
                             <span class="uk-badge" style="font-size:80%">'.number_format($response["aggregations"]["counts"]["buckets"][$i]['doc_count'], 0, ',', '.').'</span>
@@ -476,7 +480,7 @@ class Facets
                     echo '</div></li>';
                 } else {
                     echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
-                    echo '<a href="result.php?search='.$get_search.'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $response["aggregations"]["counts"]["buckets"][$i]['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$response["aggregations"]["counts"]["buckets"][$i]['key'].'</a>
+                    echo '<a href="result.php?'.http_build_query($get_search).'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $response["aggregations"]["counts"]["buckets"][$i]['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$response["aggregations"]["counts"]["buckets"][$i]['key'].'</a>
                     <span class="badge badge-primary badge-pill">'.number_format($response["aggregations"]["counts"]["buckets"][$i]['doc_count'], 0, ',', '.').'</span>';
                     echo '</li>';                   
                 }
@@ -501,7 +505,7 @@ class Facets
                     <ul class="list-group list-group-flush">';
                     foreach ($response["aggregations"]["counts"]["buckets"] as $facets) {
                         echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
-                        echo '<a href="result.php?'.$get_search.'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$facets['key'].'</a>
+                        echo '<a href="result.php?'.http_build_query($get_search).'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$facets['key'].'</a>
                             <span class="badge badge-primary badge-pill">'.number_format($facets['doc_count'], 0, ',', '.').'</span>';
                         echo '</li>';
                     }
