@@ -298,7 +298,7 @@ class Elasticsearch
                             'analyzer' => 'portuguese'
                         ],                                                                         
                         'datePublished' => [
-                            'type' => 'integer',
+                            'type' => 'text',
                             'fields' => [
                                 'keyword' => [
                                     'type' => 'keyword',
