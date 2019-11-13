@@ -524,6 +524,37 @@ class Facets
 
     }
 
+    public function facetExistsField($field, $size, $field_name, $sort, $sort_type, $get_search, $open = false)
+    {
+        global $url_base;
+
+        if (isset($get_search["page"])) {
+            unset($get_search["page"]);            
+        }
+
+        $query = $this->query;
+        $query["aggs"]["field_not_exists"]["missing"]["field"] = "$field.keyword";
+        $query["aggs"]["field_exists"]["filter"]["exists"]["field"] = "$field.keyword";
+
+        $response = Elasticsearch::search(null, 0, $query);
+
+
+        echo '<a href="#" class="list-group-item list-group-item-action active">'.$field_name.'</a>';
+        echo '<ul class="list-group list-group-flush">';
+
+        echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
+        echo '<a href="result.php?search=_exists_:'.$field.'" style="color:#0040ff;font-size: 90%">Está preenchido</a>
+        <span class="badge badge-primary badge-pill">'.number_format($response["aggregations"]["field_exists"]["doc_count"], 0, ',', '.').'</span>';
+        echo '</li>';
+
+        echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
+        echo '<a href="result.php?search=-_exists_:'.$field.'" style="color:#0040ff;font-size: 90%">Não está preenchido</a>
+        <span class="badge badge-primary badge-pill">'.number_format($response["aggregations"]["field_not_exists"]["doc_count"], 0, ',', '.').'</span>';
+        echo '</li>';
+
+        echo '</ul>';
+    }    
+
     public function rebuild_facet($field,$size,$nome_do_campo)
     {
         $query = $this->query;
@@ -552,7 +583,7 @@ class Facets
 
     }
 
-    public function facet_range($field,$size,$nome_do_campo,$type_of_number = "")
+    public function facet_range($field, $size, $field_name, $type_of_number = "")
     {
         $query = $this->query;
         if ($type_of_number == "INT") {
@@ -588,20 +619,16 @@ class Facets
         $result_count = count($response["aggregations"]["ranges"]["buckets"]);
 
         if ($result_count > 0) {
-            echo '<li class="uk-parent">';
-            echo '<a href="#" style="color:#333">'.$nome_do_campo.'</a>';
-            echo ' <ul class="uk-nav-sub">';
+            echo '<a href="#" class="list-group-item list-group-item-action active">'.$field_name.'</a>';
+            echo '<ul class="list-group list-group-flush">';
             foreach ($response["aggregations"]["ranges"]["buckets"] as $facets) {
                 $facets_array = explode("-", $facets['key']);
-                echo '<li>
-                    <div uk-grid>
-                    <div class="uk-width-3-3 uk-text-small" style="color:#333">';
-                    echo '<a style="color:#333" href="http://'.$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"].'?'.$_SERVER["QUERY_STRING"].'&search='.$field.':['.$facets_array[0].' TO '.$facets_array[1].']">Intervalo '.$facets['key'].' ('.number_format($facets['doc_count'],0,',','.').')</a>';
-                    echo '</div>';
-
-                echo '</div></li>';
+                echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
+                echo '<a href="result.php?&search='.$field.':['.$facets_array[0].' TO '.$facets_array[1].']" style="color:#0040ff;font-size: 90%">Intervalo '.$facets['key'].'</a>
+                <span class="badge badge-primary badge-pill">'.number_format($facets['doc_count'],0,',','.').'</span>';
+                echo '</li>';
             };
-            echo   '</ul></li>';
+            echo '</ul>';
         }
 
 
