@@ -399,7 +399,7 @@ class Requests
         }         
         
         if (isset($query["query"]["bool"])) {
-            $query["query"]["bool"]["should"] = $queryArray;
+            $query["query"]["bool"]["must"] = $queryArray;
         } else {
             $query["query"] = $queryArray;
         }        
