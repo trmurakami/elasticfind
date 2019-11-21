@@ -650,6 +650,12 @@ class Citation
         case "PARTE DE MONOGRAFIA/LIVRO":
             return "chapter";
         break;
+        case "MONOGRAFIA/LIVRO-ED/ORG":
+            return "book";
+        break;
+        case "LIVRO":
+            return "book";
+        break;                  
         case "APRESENTACAO SONORA/CENICA/ENTREVISTA":
             return "interview";
         break;
@@ -722,6 +728,12 @@ class Citation
                 }
 
             }
+        }
+
+        if (!empty($citacao["doi"]) || !empty($citacao["url"][0])) {
+            $array_citation["accessed"]["date-parts"][0][] = date("Y");
+            $array_citation["accessed"]["date-parts"][0][] = date("m");
+            $array_citation["accessed"]["date-parts"][0][] = date("d");
         }
 
         $json = json_encode($array_citation);
