@@ -414,7 +414,7 @@ class Requests
 
 class Facets
 {
-    public function facet($field, $size, $field_name, $sort, $sort_type, $get_search, $open = false)
+    public function facet($field, $size, $field_name, $sort, $sort_type, $get_search, $alternative_index = null)
     {
         global $url_base;
 
@@ -432,7 +432,7 @@ class Facets
         }
         $query["aggs"]["counts"]["terms"]["size"] = $size;
 
-        $response = Elasticsearch::search(null, 0, $query);
+        $response = Elasticsearch::search(null, 0, $query, $alternative_index);
 
         $result_count = count($response["aggregations"]["counts"]["buckets"]);        
 
