@@ -746,7 +746,7 @@ class Citation
 
 class UI {
    
-    static function pagination($page, $total, $limit)
+    static function pagination($page, $total, $limit, $url = null)
     {
 
         echo '<nav>';
@@ -755,13 +755,13 @@ class UI {
             echo '<li class="list-group-item w-25 disabled">Anterior</li>';
         } else {
             $_GET["page"] = $page-1 ;
-            echo '<li class="list-group-item w-25"><a href="result.php?'.http_build_query($_GET).'"> Anterior</a></li>';
+            echo '<li class="list-group-item w-25"><a href="'.(!empty($url) ? $url : "result.php").'?'.http_build_query($_GET).'"> Anterior</a></li>';
         }
         echo '<li class="list-group-item w-25 disabled">Página '.number_format($page, 0, ',', '.') .'</li>';
         echo '<li class="list-group-item w-25 disabled">'.number_format($total, 0, ',', '.') .'&nbsp;registros</li>';
         if ($total/$limit > $page) {
             $_GET["page"] = $page+1;
-            echo '<li class="list-group-item w-25"><a href="result.php?'.http_build_query($_GET).'"> Próxima</a></li>';
+            echo '<li class="list-group-item w-25"><a href="'.(!empty($url) ? $url : "result.php").''.http_build_query($_GET).'"> Próxima</a></li>';
         } else {
             echo '<li class="list-group-item w-25 disabled">Próxima</li>';
         }
