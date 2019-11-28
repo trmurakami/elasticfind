@@ -761,7 +761,7 @@ class UI {
         echo '<li class="list-group-item w-25 disabled">'.number_format($total, 0, ',', '.') .'&nbsp;registros</li>';
         if ($total/$limit > $page) {
             $_GET["page"] = $page+1;
-            echo '<li class="list-group-item w-25"><a href="'.(!empty($url) ? $url : "result.php").''.http_build_query($_GET).'"> Próxima</a></li>';
+            echo '<li class="list-group-item w-25"><a href="'.(!empty($url) ? $url : "result.php").'?'.http_build_query($_GET).'"> Próxima</a></li>';
         } else {
             echo '<li class="list-group-item w-25 disabled">Próxima</li>';
         }
