@@ -440,28 +440,34 @@ class Facets
 
         } elseif (($result_count != 0) && ($result_count < 5)) {
 
-            echo '<a href="#" class="list-group-item list-group-item-action active">'.$field_name.'</a>';
-            echo '<ul class="list-group list-group-flush">';
-            foreach ($response["aggregations"]["counts"]["buckets"] as $facets) {
-                if ($facets['key'] == "Não preenchido") {
-                    echo '<li>';
-                    echo '<div uk-grid>
-                            <div class="uk-width-expand" style="color:#333">
-                                <a href="result.php?'.http_build_query($get_search).'&search=(-_exists_:'.$field.')">'.$facets['key'].'</a>
-                            </div>
-                            <div class="uk-width-auto" style="color:#333">
-                                <span class="uk-badge" style="font-size:80%">'.number_format($facets['doc_count'], 0, ',', '.').'</span>
-                            </div>';
-                    echo '</div></li>';
-                } else {
-                    echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
-                    echo '<a href="result.php?'.http_build_query($get_search).'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$facets['key'].'</a>
-                    <span class="badge badge-primary badge-pill">'.number_format($facets['doc_count'], 0, ',', '.').'</span>';
-                    echo '</li>'; 
-                }
+            if (($result_count == 1) && ($response["aggregations"]["counts"]["buckets"][0]["key"] == "")) {
 
-            };
-            echo '</ul>';
+            } else {
+                echo '<a href="#" class="list-group-item list-group-item-action active">'.$field_name.'</a>';
+                echo '<ul class="list-group list-group-flush">';
+                foreach ($response["aggregations"]["counts"]["buckets"] as $facets) {
+                    if ($facets['key'] == "Não preenchido") {
+                        echo '<li>';
+                        echo '<div uk-grid>
+                                <div class="uk-width-expand" style="color:#333">
+                                    <a href="result.php?'.http_build_query($get_search).'&search=(-_exists_:'.$field.')">'.$facets['key'].'</a>
+                                </div>
+                                <div class="uk-width-auto" style="color:#333">
+                                    <span class="uk-badge" style="font-size:80%">'.number_format($facets['doc_count'], 0, ',', '.').'</span>
+                                </div>';
+                        echo '</div></li>';
+                    } else {
+                        echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
+                        echo '<a href="result.php?'.http_build_query($get_search).'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$facets['key'].'</a>
+                        <span class="badge badge-primary badge-pill">'.number_format($facets['doc_count'], 0, ',', '.').'</span>';
+                        echo '</li>'; 
+                    }
+    
+                };
+                echo '</ul>';
+            }
+
+
 
         } else {
             $i = 0;
