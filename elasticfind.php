@@ -858,20 +858,50 @@ class DSpaceREST
         global $dspaceRest;
         global $dspaceEmail;
         global $dspacePassword;
-        $ch = curl_init();
 
-        curl_setopt($ch, CURLOPT_URL, "$dspaceRest/rest/login");
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_HEADER, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS,
-            http_build_query(array('email' => $dspaceEmail,'password' => $dspacePassword))
+        // API URL
+        $url = ''.$dspaceRest.'/rest/login';
+
+        // Create a new cURL resource
+        $ch = curl_init($url);
+
+        // Setup request to send json via POST
+        $data = array(
+            'email' => $dspaceEmail,
+            'password' => $dspacePassword
         );
+        $jsonData = json_encode($data);
+
+        // Attach encoded JSON string to the POST fields
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+
+        // Set the content type to application/json
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+
+        // Return response instead of outputting
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        $server_output = curl_exec($ch);
-        $output_parsed = explode(" ", $server_output);
+        // Execute the POST request
+        $result = curl_exec($ch);
 
-        return $output_parsed[3];
+        // // Close cURL resource
+        // curl_close($ch);
+
+        // $ch = curl_init();
+
+        // curl_setopt($ch, CURLOPT_URL, "$dspaceRest/rest/login");
+        // curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+        // curl_setopt($ch, CURLOPT_POST, 1);
+        // curl_setopt($ch, CURLOPT_HEADER, 1);        
+        // curl_setopt($ch, CURLOPT_POSTFIELDS,
+        //     http_build_query(array('email' => $dspaceEmail,'password' => $dspacePassword))
+        // );
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        // $server_output = curl_exec($ch);
+        // $output_parsed = explode(" ", $server_output);
+
+        return $result;
 
         curl_close($ch);
 
@@ -1028,7 +1058,7 @@ class DSpaceREST
     //     curl_close($ch);
     // }
 
-    static function createItemDSpace($dataString,$collection,$DSpaceCookies)
+    static function createItemDSpace($dataString, $collection, $DSpaceCookies)
     {
         global $dspaceRest;
         $ch = curl_init();
@@ -1037,11 +1067,12 @@ class DSpaceREST
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            "Cookie: $DSpaceCookies",
+            "rest-dspace-token: $DSpaceCookies",
             'Content-Type: application/json'
             )
         );
         $output = curl_exec($ch);
+        return $output;
         curl_close($ch);
 
     }
@@ -1118,12 +1149,12 @@ class DSpaceREST
         $arrayDC["metadata"][] = $title;
         $title = [];
 
-        /* Sysno */
-        $sysnoArray["key"] = "usp.sysno";
-        $sysnoArray["language"] = "pt_BR";
-        $sysnoArray["value"] = $sysno;
-        $arrayDC["metadata"][] = $sysnoArray;
-        $sysnoArray = [];
+        // /* Sysno */
+        // $sysnoArray["key"] = "usp.sysno";
+        // $sysnoArray["language"] = "pt_BR";
+        // $sysnoArray["value"] = $sysno;
+        // $arrayDC["metadata"][] = $sysnoArray;
+        // $sysnoArray = [];
 
         // /* Abstract */
         // if (!empty($marc["record"]["940"]["a"])){
@@ -1176,38 +1207,38 @@ class DSpaceREST
         }
 
 
-        /* Unidade USP */
-        if (isset($cursor["_source"]["authorUSP"])) {
-            foreach ($cursor["_source"]["authorUSP"] as $unidadeUSP) {
-                $unidadeUSPArray["key"] = "usp.unidadeUSP";
-                $unidadeUSPArray["language"] = "pt_BR";
-                $unidadeUSPArray["value"] = $unidadeUSP["unidadeUSP"];
-                $arrayDC["metadata"][] = $unidadeUSPArray;
-                $unidadeUSPArray = [];
+        // /* Unidade USP */
+        // if (isset($cursor["_source"]["authorUSP"])) {
+        //     foreach ($cursor["_source"]["authorUSP"] as $unidadeUSP) {
+        //         $unidadeUSPArray["key"] = "usp.unidadeUSP";
+        //         $unidadeUSPArray["language"] = "pt_BR";
+        //         $unidadeUSPArray["value"] = $unidadeUSP["unidadeUSP"];
+        //         $arrayDC["metadata"][] = $unidadeUSPArray;
+        //         $unidadeUSPArray = [];
 
-                $authorUSPArray["key"] = "usp.authorUSP.name";
-                $authorUSPArray["language"] = "pt_BR";
-                $authorUSPArray["value"] = $unidadeUSP["name"];
-                $arrayDC["metadata"][] = $authorUSPArray;
-                $authorUSPArray = [];
-            }
-        }
+        //         $authorUSPArray["key"] = "usp.authorUSP.name";
+        //         $authorUSPArray["language"] = "pt_BR";
+        //         $authorUSPArray["value"] = $unidadeUSP["name"];
+        //         $arrayDC["metadata"][] = $authorUSPArray;
+        //         $authorUSPArray = [];
+        //     }
+        // }
 
-        /* Subject */
-        foreach ($cursor["_source"]["about"] as $subject) {
-            $subjectArray["key"] = "dc.subject.other";
-            $subjectArray["language"] = "pt_BR";
-            $subjectArray["value"] = $subject;
-            $arrayDC["metadata"][] = $subjectArray;
-            $subjectArray = [];
-        }
+        // /* Subject */
+        // foreach ($cursor["_source"]["about"] as $subject) {
+        //     $subjectArray["key"] = "dc.subject.other";
+        //     $subjectArray["language"] = "pt_BR";
+        //     $subjectArray["value"] = $subject;
+        //     $arrayDC["metadata"][] = $subjectArray;
+        //     $subjectArray = [];
+        // }
 
-        /* USP Type */
-        $USPTypeArray["key"] = "usp.type";
-        $USPTypeArray["language"] = "pt_BR";
-        $USPTypeArray["value"] = $cursor["_source"]["type"];
-        $arrayDC["metadata"][] = $USPTypeArray;
-        $USPTypeArray = [];
+        // /* USP Type */
+        // $USPTypeArray["key"] = "usp.type";
+        // $USPTypeArray["language"] = "pt_BR";
+        // $USPTypeArray["value"] = $cursor["_source"]["type"];
+        // $arrayDC["metadata"][] = $USPTypeArray;
+        // $USPTypeArray = [];
 
         $jsonDC = json_encode($arrayDC);
         return $jsonDC;
