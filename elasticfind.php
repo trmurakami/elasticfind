@@ -293,6 +293,9 @@ class Elasticsearch
                                 ]
                             ]
                         ],
+                        'citedby' => [
+                            'type' => 'integer'
+                        ],                           
                         'description' => [
                             'type' => 'text',
                             'analyzer' => 'portuguese'
