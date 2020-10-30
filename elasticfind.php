@@ -240,7 +240,7 @@ class Elasticsearch
                                     'ignore_above' => 256
                                 ]
                             ]
-                        ],                        
+                        ],
                         'author' => [
                             'properties' => [
                                 'person' => [
@@ -253,7 +253,7 @@ class Elasticsearch
                                                     'type' => 'keyword',
                                                     'ignore_above' => 256
                                                 ]
-                                            ]                                            
+                                            ]
                                         ]
                                     ]
                                 ],
@@ -267,7 +267,7 @@ class Elasticsearch
                                                     'type' => 'keyword',
                                                     'ignore_above' => 256
                                                 ]
-                                            ]                                            
+                                            ]
                                         ]
                                     ]
                                 ]
@@ -295,11 +295,11 @@ class Elasticsearch
                         ],
                         'citedby' => [
                             'type' => 'integer'
-                        ],                           
+                        ],
                         'description' => [
                             'type' => 'text',
                             'analyzer' => 'portuguese'
-                        ],                                                                         
+                        ],
                         'datePublished' => [
                             'type' => 'text',
                             'fields' => [
@@ -309,13 +309,25 @@ class Elasticsearch
                                 ]
                             ]
                         ],
+                        'doi' => [
+                            'type' => 'text',
+                            'fields' => [
+                                'keyword' => [
+                                    'type' => 'keyword',
+                                    'ignore_above' => 256
+                                ]
+                            ]
+                        ],
+                        'ExternalData' => [
+                            'type' => 'nested'
+                        ],
                         'facebook' => [
                             'properties' => [
                                 'facebook_total' => [
                                     'type' => 'integer'
                                 ]
                             ]
-                        ]                                      
+                        ]
                     ]
                 ]
             ];
