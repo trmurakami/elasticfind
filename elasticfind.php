@@ -545,12 +545,12 @@ class Facets
 
     }
 
-    public function facetExistsField($field, $size, $field_name, $sort, $sort_type, $get_search, $open = false)
+    public function facetExistsField($fileName,$field, $size, $field_name, $sort, $sort_type, $get_search, $open = false)
     {
         global $url_base;
 
         if (isset($get_search["page"])) {
-            unset($get_search["page"]);            
+            unset($get_search["page"]);
         }
 
         $query = $this->query;
@@ -564,12 +564,12 @@ class Facets
         echo '<ul class="list-group list-group-flush">';
 
         echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
-        echo '<a href="result.php?search=_exists_:'.$field.'" style="color:#0040ff;font-size: 90%">Está preenchido</a>
+        echo '<a href="'.$fileName.'?search=_exists_:'.$field.'" style="color:#0040ff;font-size: 90%">Está preenchido</a>
         <span class="badge badge-primary badge-pill">'.number_format($response["aggregations"]["field_exists"]["doc_count"], 0, ',', '.').'</span>';
         echo '</li>';
 
         echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
-        echo '<a href="result.php?search=-_exists_:'.$field.'" style="color:#0040ff;font-size: 90%">Não está preenchido</a>
+        echo '<a href="'.$fileName.'?search=-_exists_:'.$field.'" style="color:#0040ff;font-size: 90%">Não está preenchido</a>
         <span class="badge badge-primary badge-pill">'.number_format($response["aggregations"]["field_not_exists"]["doc_count"], 0, ',', '.').'</span>';
         echo '</li>';
 
