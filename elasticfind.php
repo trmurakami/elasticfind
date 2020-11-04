@@ -604,7 +604,7 @@ class Facets
 
     }
 
-    public function facet_range($field, $size, $field_name, $type_of_number = "")
+    public function facet_range($fileName, $field, $size, $field_name, $type_of_number = "")
     {
         $query = $this->query;
         if ($type_of_number == "INT") {
@@ -645,7 +645,7 @@ class Facets
             foreach ($response["aggregations"]["ranges"]["buckets"] as $facets) {
                 $facets_array = explode("-", $facets['key']);
                 echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
-                echo '<a href="result.php?&search='.$field.':['.$facets_array[0].' TO '.$facets_array[1].']" style="color:#0040ff;font-size: 90%">Intervalo '.$facets['key'].'</a>
+                echo '<a href="'.$fileName.'?&search='.$field.':['.$facets_array[0].' TO '.$facets_array[1].']" style="color:#0040ff;font-size: 90%">Intervalo '.$facets['key'].'</a>
                 <span class="badge badge-primary badge-pill">'.number_format($facets['doc_count'],0,',','.').'</span>';
                 echo '</li>';
             };
