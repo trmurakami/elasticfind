@@ -383,17 +383,17 @@ class Requests
         if (!empty($get['search'])) {
 
             $queryArray["query_string"]["query"] = $get['search'];
-            //$queryArray["multi_match"]["type"] = "best_fields";            
+            //$queryArray["multi_match"]["type"] = "best_fields";
             $queryArray["query_string"]["fields"] = ["name", "alternateName", "author.person.name", "author.organization.name", "about", "source", "description"];
             //$queryArray["multi_match"]["operator"] = "and";
             //$queryArray["query_string"]["analyzer"] = "portuguese";
                     
         } else { 
-            $queryArray["query_string"]["query"] = "*";             
+            $queryArray["query_string"]["query"] = "*";
 
         }
         
-        if (!empty($get['initialYear']) || !empty($get['finalYear'])) {
+        if (!empty($get['initialYear']) || !empty($get['finalYear'])) {            
             if (!empty($get['initialYear'])) {
                 $initialYear = $get['initialYear'];
             } else {
@@ -407,17 +407,16 @@ class Requests
             }
             $dateString = 'datePublished:['.$initialYear.' TO '.$finalYear.']';
             $query["query"]["bool"]["must"]["query_string"]["query"] = $dateString;
-        }           
+            
+        }
 
         if (!empty($get['range'])) {
             $query["query"]["bool"]["must"]["query_string"]["query"] = $get['range'][0];
-        }         
+        }
         
-        if (isset($query["query"]["bool"])) {
-            $query["query"]["bool"]["must"] = $queryArray;
-        } else {
+        if (!isset($query["query"]["bool"])) {
             $query["query"] = $queryArray;
-        }        
+        }
 
         //echo "<br/><br/><br/>";
         //print("<pre>".print_r($query, true)."</pre>");
