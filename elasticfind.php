@@ -381,7 +381,6 @@ class Requests
         }
 
         if (!empty($get['search'])) {
-
             $queryArray["query_string"]["query"] = $get['search'];
             //$queryArray["multi_match"]["type"] = "best_fields";
             $queryArray["query_string"]["fields"] = ["name", "alternateName", "author.person.name", "author.organization.name", "about", "source", "description"];
@@ -393,28 +392,23 @@ class Requests
 
         }
         
-        if (!empty($get['initialYear']) || !empty($get['finalYear'])) {            
+        if (!empty($get['initialYear']) || !empty($get['finalYear'])) {
             if (!empty($get['initialYear'])) {
-                $initialYear = $get['initialYear'];
-            } else {
-                $initialYear = "*";
+                $rangeQuery = $query["query"]["bool"]["filter"][$i_filter]["range"]["datePublished"]["gte"] = $get['initialYear'];
             }
 
             if (!empty($get['finalYear'])) {
-                $finalYear = $get['finalYear'];
-            } else {
-                $finalYear = "*";
+                $rangeQuery = $query["query"]["bool"]["filter"][$i_filter]["range"]["datePublished"]["lte"] = $get['finalYear'];
             }
-            $dateString = 'datePublished:['.$initialYear.' TO '.$finalYear.']';
-            $query["query"]["bool"]["must"]["query_string"]["query"] = $dateString;
-            
         }
 
         if (!empty($get['range'])) {
-            $query["query"]["bool"]["must"]["query_string"]["query"] = $get['range'][0];
+            $query["query"]["bool"]["must"]["query_string"][0]["query"] = $get['range'][0];
         }
         
-        if (!isset($query["query"]["bool"])) {
+        if (isset($query["query"]["bool"])) {
+            $query["query"]["bool"]["must"] = $queryArray;
+        } else {
             $query["query"] = $queryArray;
         }
 
