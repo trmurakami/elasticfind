@@ -622,8 +622,12 @@ class Facets
             $query["aggs"]["ranges"]["range"]["ranges"][3]["from"] = 2;
             $query["aggs"]["ranges"]["range"]["ranges"][3]["to"] = 5;
             $query["aggs"]["ranges"]["range"]["ranges"][4]["from"] = 5;
-            $query["aggs"]["ranges"]["range"]["ranges"][3]["to"] = 10;
-            $query["aggs"]["ranges"]["range"]["ranges"][4]["from"] = 10;
+            $query["aggs"]["ranges"]["range"]["ranges"][4]["to"] = 10;
+            $query["aggs"]["ranges"]["range"]["ranges"][5]["from"] = 10;
+            $query["aggs"]["ranges"]["range"]["ranges"][5]["to"] = 50;
+            $query["aggs"]["ranges"]["range"]["ranges"][6]["from"] = 50;
+            $query["aggs"]["ranges"]["range"]["ranges"][6]["to"] = 100;
+            $query["aggs"]["ranges"]["range"]["ranges"][7]["from"] = 100;
         }
 
         //$query["aggs"]["counts"]["terms"]["size"] = $size;
