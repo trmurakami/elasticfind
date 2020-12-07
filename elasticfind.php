@@ -383,7 +383,7 @@ class Requests
         if (!empty($get['search'])) {
             $queryArray["query_string"]["query"] = $get['search'];
             //$queryArray["multi_match"]["type"] = "best_fields";
-            $queryArray["query_string"]["fields"] = ["name", "alternateName", "author.person.name", "author.organization.name", "about", "source", "description"];
+            $queryArray["query_string"]["fields"] = ["name", "alternateName", "author.person.name", "author.organization.name", "about", "source", "description", "vinculo.lattes_id", "vinculo.nome"];
             //$queryArray["multi_match"]["operator"] = "and";
             //$queryArray["query_string"]["analyzer"] = "portuguese";
                     
@@ -1269,6 +1269,52 @@ class DSpaceREST
         print_r($server_output);
         curl_close($ch);
 
+    }
+}
+
+Class Work
+{
+    public $type;
+    public $source;
+    public $lattes_ids;
+    public $tag;
+    public $name;
+    public $author;
+    public $datePublished;
+    public $language;
+    public $url;
+    public $doi;
+    public $pageStart;
+    public $pageEnd;
+
+    function __construct()
+    {
+        $this->type = "Work";
+    }
+    function getDoc()
+    {
+        $doc = $this->type;
+        return $doc;
+    }
+}
+
+Class LattesWork extends Work
+{
+    public $lattes;
+    public $vinculo;
+    public function __construct()
+    {
+        parent::__construct();
+        $this->source = "Base Lattes";
+    }
+}
+
+Class TrabalhosEmEventosLattes extends LattesWork
+{
+    public $detalhamentoDoTrabalho;
+    function __construct()
+    {
+        parent::__construct();
     }
 }
 
