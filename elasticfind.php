@@ -362,10 +362,12 @@ class Requests
         $i_filter = 0;
         if (!empty($get['filter'])) {
             foreach ($get['filter'] as $filter) {
-                $filter_array = explode(":", $filter);
-                $filter_array_term = str_replace('"', "", (string)$filter_array[1]);
-                $query["query"]["bool"]["filter"][$i_filter]["term"][(string)$filter_array[0].".keyword"] = $filter_array_term;
-                $i_filter++;
+                if (!empty($filter)) {
+                    $filter_array = explode(":", $filter);
+                    $filter_array_term = str_replace('"', "", (string)$filter_array[1]);
+                    $query["query"]["bool"]["filter"][$i_filter]["term"][(string)$filter_array[0].".keyword"] = $filter_array_term;
+                    $i_filter++;
+                }
             }
 
         }
