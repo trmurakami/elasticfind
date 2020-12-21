@@ -768,20 +768,22 @@ class UI {
    
     static function pagination($page, $total, $limit, $url = null)
     {
-
+        print_r($_SERVER);
+        echo '<br/><br/>';
+        print_r(basename($_SERVER["SCRIPT_FILENAME"], ''));
         echo '<nav>';
         echo '<ul class="list-group list-group-horizontal">';
         if ($page == 1) {
             echo '<li class="list-group-item w-25 disabled">Anterior</li>';
         } else {
             $_GET["page"] = $page-1 ;
-            echo '<li class="list-group-item w-25"><a href="'.(!empty($url) ? $url : "result.php").'?'.http_build_query($_GET).'"> Anterior</a></li>';
+            echo '<li class="list-group-item w-25"><a href="'.(!empty($url) ? $url : ''.basename($_SERVER["SCRIPT_FILENAME"], '').'').'?'.http_build_query($_GET).'"> Anterior</a></li>';
         }
         echo '<li class="list-group-item w-25 disabled">Página '.number_format($page, 0, ',', '.') .'</li>';
         echo '<li class="list-group-item w-25 disabled">'.number_format($total, 0, ',', '.') .'&nbsp;registros</li>';
         if ($total/$limit > $page) {
             $_GET["page"] = $page+1;
-            echo '<li class="list-group-item w-25"><a href="'.(!empty($url) ? $url : "result.php").'?'.http_build_query($_GET).'"> Próxima</a></li>';
+            echo '<li class="list-group-item w-25"><a href="'.(!empty($url) ? $url : ''.basename($_SERVER["SCRIPT_FILENAME"], '').'').'?'.http_build_query($_GET).'"> Próxima</a></li>';
         } else {
             echo '<li class="list-group-item w-25 disabled">Próxima</li>';
         }
