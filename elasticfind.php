@@ -768,9 +768,6 @@ class UI {
    
     static function pagination($page, $total, $limit, $url = null)
     {
-        print_r($_SERVER);
-        echo '<br/><br/>';
-        print_r(basename($_SERVER["SCRIPT_FILENAME"], ''));
         echo '<nav>';
         echo '<ul class="list-group list-group-horizontal">';
         if ($page == 1) {
