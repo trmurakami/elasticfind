@@ -398,21 +398,15 @@ class Requests
 
         if (!empty($get['search'])) {
             $queryArray["query_string"]["query"] = str_replace('and', 'AND', $get['search']);
-            //$queryArray["multi_match"]["type"] = "best_fields";
             $queryArray["query_string"]["fields"] = ["name", "alternateName", "author.person.name", "author.organization.name", "about", "source", "description", "vinculo.lattes_id", "vinculo.nome"];
-            //$queryArray["multi_match"]["operator"] = "and";
-            //$queryArray["query_string"]["analyzer"] = "portuguese";
-                    
-        } else { 
+        } else {
             $queryArray["query_string"]["query"] = "*";
-
         }
         
         if (!empty($get['initialYear']) || !empty($get['finalYear'])) {
             if (!empty($get['initialYear'])) {
                 $rangeQuery = $query["query"]["bool"]["filter"][$i_filter]["range"]["datePublished"]["gte"] = $get['initialYear'];
             }
-
             if (!empty($get['finalYear'])) {
                 $rangeQuery = $query["query"]["bool"]["filter"][$i_filter]["range"]["datePublished"]["lte"] = $get['finalYear'];
             }
@@ -428,9 +422,6 @@ class Requests
             $query["query"] = $queryArray;
         }
 
-        //echo "<br/><br/><br/>";
-        //print("<pre>".print_r($query, true)."</pre>");
-       
         return compact('page', 'query', 'limit', 'skip');
     }
 
