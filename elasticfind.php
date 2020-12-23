@@ -397,7 +397,7 @@ class Requests
         }
 
         if (!empty($get['search'])) {
-            $queryArray["query_string"]["query"] = $get['search'];
+            $queryArray["query_string"]["query"] = str_replace('and', 'AND', $get['search']);
             //$queryArray["multi_match"]["type"] = "best_fields";
             $queryArray["query_string"]["fields"] = ["name", "alternateName", "author.person.name", "author.organization.name", "about", "source", "description", "vinculo.lattes_id", "vinculo.nome"];
             //$queryArray["multi_match"]["operator"] = "and";
