@@ -244,8 +244,8 @@ class Elasticsearch
                         'author' => [
                             'properties' => [
                                 'person' => [
+                                    'type' => 'nested',
                                     'properties' => [
-                                        'type' => 'nested',
                                         'name' => [
                                             'type' => 'text',
                                             'analyzer' => 'portuguese',
