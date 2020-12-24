@@ -245,6 +245,7 @@ class Elasticsearch
                             'properties' => [
                                 'person' => [
                                     'properties' => [
+                                        'type' => 'nested',
                                         'name' => [
                                             'type' => 'text',
                                             'analyzer' => 'portuguese',
@@ -258,6 +259,7 @@ class Elasticsearch
                                     ]
                                 ],
                                 'organization' => [
+                                    'type' => 'nested',
                                     'properties' => [
                                         'name' => [
                                             'type' => 'text',
@@ -434,7 +436,7 @@ class Facets
         global $url_base;
 
         if (isset($get_search["page"])) {
-            unset($get_search["page"]);            
+            unset($get_search["page"]);
         }
 
         $query = $this->query;
@@ -449,7 +451,7 @@ class Facets
 
         $response = Elasticsearch::search(null, 0, $query, $alternative_index);
 
-        $result_count = count($response["aggregations"]["counts"]["buckets"]);        
+        $result_count = count($response["aggregations"]["counts"]["buckets"]);
 
         if ($result_count == 0) {
 
@@ -458,7 +460,15 @@ class Facets
             if (($result_count == 1) && ($response["aggregations"]["counts"]["buckets"][0]["key"] == "")) {
 
             } else {
-                echo '<a href="#" class="list-group-item list-group-item-action active">'.$field_name.'</a>';
+                echo '<div class="accordion-item">';
+                echo '<h2 class="accordion-header" id="heading'.hash('crc32', $field_name).'">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse'.hash('crc32', $field_name).'" aria-expanded="true" aria-controls="collapse'.hash('crc32', $field_name).'">
+                '.$field_name.'
+                </button>
+                </h2>';
+                echo '<div id="collapse'.hash('crc32', $field_name).'" class="accordion-collapse collapse show" aria-labelledby="heading'.hash('crc32', $field_name).'" data-bs-parent="#accordionExample">
+                <div class="accordion-body">';
+
                 echo '<ul class="list-group list-group-flush">';
                 foreach ($response["aggregations"]["counts"]["buckets"] as $facets) {
                     if ($facets['key'] == "Não preenchido") {
@@ -474,20 +484,25 @@ class Facets
                     } else {
                         echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
                         echo '<a href="'.$fileName.'?'.http_build_query($get_search).'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$facets['key'].'</a>
-                        <span class="badge badge-primary badge-pill">'.number_format($facets['doc_count'], 0, ',', '.').'</span>';
+                        <span class="badge bg-primary badge-pill">'.number_format($facets['doc_count'], 0, ',', '.').'</span>';
                         echo '</li>'; 
                     }
     
                 };
                 echo '</ul>';
+                echo '</div></div>';
             }
-
-
-
         } else {
             $i = 0;
-            echo '<a href="#" class="list-group-item list-group-item-action active">'.$field_name.'</a>';
-            echo '<ul class="list-group list-group-flush">';  
+            echo '<div class="accordion-item">';
+            echo '<h2 class="accordion-header" id="heading'.hash('crc32', $field_name).'">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse'.hash('crc32', $field_name).'" aria-expanded="true" aria-controls="collapse'.hash('crc32', $field_name).'">
+            '.$field_name.'
+            </button>
+            </h2>';
+            echo '<div id="collapse'.hash('crc32', $field_name).'" class="accordion-collapse collapse" aria-labelledby="heading'.hash('crc32', $field_name).'" data-bs-parent="#accordionExample">';
+            echo '<div class="accordion-body">';
+            echo '<ul class="list-group list-group-flush">';
             while ($i < 5) {
                 if ($response["aggregations"]["counts"]["buckets"][$i]['key'] == "Não preenchido") {
                     echo '<li>';
@@ -502,10 +517,10 @@ class Facets
                 } else {
                     echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
                     echo '<a href="'.$fileName.'?'.http_build_query($get_search).'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $response["aggregations"]["counts"]["buckets"][$i]['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$response["aggregations"]["counts"]["buckets"][$i]['key'].'</a>
-                    <span class="badge badge-primary badge-pill">'.number_format($response["aggregations"]["counts"]["buckets"][$i]['doc_count'], 0, ',', '.').'</span>';
-                    echo '</li>';                   
+                    <span class="badge bg-primary badge-pill">'.number_format($response["aggregations"]["counts"]["buckets"][$i]['doc_count'], 0, ',', '.').'</span>';
+                    echo '</li>';
                 }
-                $i++;                
+                $i++;
             }
 
 
@@ -537,11 +552,11 @@ class Facets
                 </div>
                 </div>
             </div></div></div>
-            ';         
-
-
+            ';
+            echo '</div></div>';
         }
         echo '</li>';
+        
 
     }
 
