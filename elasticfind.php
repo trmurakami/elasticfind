@@ -525,7 +525,7 @@ class Facets
 
 
             echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
-            echo '<button type="button" class="btn btn-secondary" data-toggle="modal" data-target="#'.str_replace(".", "", $field).'Modal">mais >>></button>  ';
+            echo '<button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#'.str_replace(".", "", $field).'Modal">mais >>></button>  ';
             echo '</li>';
             echo '</ul>';
             echo '<div class="modal fade" id="'.str_replace(".", "", $field).'Modal" tabindex="-1" role="dialog" aria-labelledby="'.str_replace(".", "", $field).'ModalLabel" aria-hidden="true">
@@ -533,7 +533,7 @@ class Facets
                 <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="'.$field.'ModalLabel">'.$field_name.'</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -548,7 +548,7 @@ class Facets
             echo '</ul>';
              echo '
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
                 </div>
                 </div>
             </div></div></div>
