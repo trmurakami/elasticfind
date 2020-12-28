@@ -431,7 +431,7 @@ class Requests
 
 class Facets
 {
-    public function facet($fileName, $field, $size, $field_name, $sort, $sort_type, $get_search, $alternative_index = null)
+    public function facet($fileName, $field, $size, $field_name, $sort, $sort_type, $get_search, $alternative_index = null, $collapsed = true)
     {
         global $url_base;
 
@@ -462,11 +462,11 @@ class Facets
             } else {
                 echo '<div class="accordion-item">';
                 echo '<h2 class="accordion-header" id="heading'.hash('crc32', $field_name).'">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse'.hash('crc32', $field_name).'" aria-expanded="true" aria-controls="collapse'.hash('crc32', $field_name).'">
+                <button class="accordion-button '.($collapsed == true ? "collapsed" : "").'" type="button" data-bs-toggle="collapse" data-bs-target="#collapse'.hash('crc32', $field_name).'" aria-expanded="'.($collapsed == true ? "true" : "false").'" aria-controls="collapse'.hash('crc32', $field_name).'">
                 '.$field_name.'
                 </button>
                 </h2>';
-                echo '<div id="collapse'.hash('crc32', $field_name).'" class="accordion-collapse collapse show" aria-labelledby="heading'.hash('crc32', $field_name).'" data-bs-parent="#accordionExample">
+                echo '<div id="collapse'.hash('crc32', $field_name).'" class="accordion-collapse collapse '.($collapsed == true ? "show" : "").'" aria-labelledby="heading'.hash('crc32', $field_name).'" data-bs-parent="#accordionExample">
                 <div class="accordion-body">';
 
                 echo '<ul class="list-group list-group-flush">';
@@ -496,11 +496,11 @@ class Facets
             $i = 0;
             echo '<div class="accordion-item">';
             echo '<h2 class="accordion-header" id="heading'.hash('crc32', $field_name).'">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse'.hash('crc32', $field_name).'" aria-expanded="true" aria-controls="collapse'.hash('crc32', $field_name).'">
+            <button class="accordion-button '.($collapsed == true ? "collapsed" : "").'" type="button" data-bs-toggle="collapse" data-bs-target="#collapse'.hash('crc32', $field_name).'" aria-expanded="'.($collapsed == true ? "true" : "false").'" aria-controls="collapse'.hash('crc32', $field_name).'">
             '.$field_name.'
             </button>
             </h2>';
-            echo '<div id="collapse'.hash('crc32', $field_name).'" class="accordion-collapse collapse" aria-labelledby="heading'.hash('crc32', $field_name).'" data-bs-parent="#accordionExample">';
+            echo '<div id="collapse'.hash('crc32', $field_name).'" class="accordion-collapse collapse '.($collapsed == true ? "show" : "").'" aria-labelledby="heading'.hash('crc32', $field_name).'" data-bs-parent="#accordionExample">';
             echo '<div class="accordion-body">';
             echo '<ul class="list-group list-group-flush">';
             while ($i < 5) {
@@ -542,7 +542,7 @@ class Facets
                     foreach ($response["aggregations"]["counts"]["buckets"] as $facets) {
                         echo '<li class="list-group-item d-flex justify-content-between align-items-center">';
                         echo '<a href="'.$fileName.'?'.http_build_query($get_search).'&filter[]='.$field.':&quot;'.str_replace('&', '%26', $facets['key']).'&quot;"  title="E" style="color:#0040ff;font-size: 90%">'.$facets['key'].'</a>
-                            <span class="badge badge-primary badge-pill">'.number_format($facets['doc_count'], 0, ',', '.').'</span>';
+                            <span class="badge bg-primary badge-pill">'.number_format($facets['doc_count'], 0, ',', '.').'</span>';
                         echo '</li>';
                     }
             echo '</ul>';
