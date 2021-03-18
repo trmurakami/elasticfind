@@ -714,6 +714,18 @@ class Citation
         case "Artigo publicado":
             return "article-journal";
         break;
+        case "Trabalhos em eventos":
+            return "paper-conference";
+        break;
+        case "Capítulo de livro publicado":
+            return "chapter";
+        break;
+        case "Livro publicado ou organizado":
+            return "book";
+        break;
+        case "Textos em jornais de notícias/revistas":
+            return "article-newspaper";
+        break;
         }
     }
 
