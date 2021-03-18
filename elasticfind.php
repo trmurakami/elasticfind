@@ -695,7 +695,7 @@ class Citation
         break;
         case "LIVRO":
             return "book";
-        break;                  
+        break;
         case "APRESENTACAO SONORA/CENICA/ENTREVISTA":
             return "interview";
         break;
@@ -711,14 +711,17 @@ class Citation
         case "TEXTO NA WEB":
             return "post-weblog";
         break;
+        case "Artigo publicado":
+            return "article-journal";
+        break;
         }
     }
 
     static function citationQuery($citacao)
     {
-
+        //var_dump($citacao);
         $array_citation = [];
-        $array_citation["type"] = Citation::getType($citacao["type"]);
+        $array_citation["tipo"] = Citation::getType($citacao["tipo"]);
         $array_citation["title"] = $citacao["name"];
 
         if (!empty($citacao["author"])) {
@@ -741,9 +744,6 @@ class Citation
         }
         if (!empty($citacao["url"][0])) {
             $array_citation["URL"] = $citacao["url"][0];
-        }
-        if ($citacao["base"][0] == "Teses e dissertações") {
-            $citacao["publisher"]["organization"]["name"] = "Universidade de São Paulo";
         }
 
         if (!empty($citacao["publisher"]["organization"]["name"])) {
@@ -778,6 +778,7 @@ class Citation
 
         $json = json_encode($array_citation);
         $data = json_decode($json);
+        //var_dump($data);
         return array($data);
     }
 
