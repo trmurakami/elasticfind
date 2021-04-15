@@ -119,13 +119,12 @@ class Elasticsearch
     /**
      * Executa o commando delete_by_query no Elasticsearch
      *
-     * @param string   $_id               ID do documento
      * @param resource $body              Arquivo JSON com os parâmetros das consultas no Elasticsearch
      * @param resource $alternative_index Se tiver indice alternativo
      * 
      * @return array Resposta do comando
      */
-    public static function deleteByQuery($_id, $body, $alternative_index = "")
+    public static function deleteByQuery($body, $alternative_index = "")
     {
         global $index;
         global $client;
@@ -137,7 +136,6 @@ class Elasticsearch
             $params["index"] = $index;
         }
 
-        $params["id"] = $_id;
         $params["body"] = $body;
 
         $response = $client->deleteByQuery($params);
