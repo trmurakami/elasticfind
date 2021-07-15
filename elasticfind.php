@@ -397,8 +397,7 @@ class Requests
         }
 
         if (!empty($get['search'])) {
-            $sanitized_query = filter_input(INPUT_GET, $get['search'], FILTER_SANITIZE_SPECIAL_CHARS);
-            $queryArray["query_string"]["query"] = str_replace('and', 'AND', $sanitized_query);
+            $queryArray["query_string"]["query"] = str_replace('and', 'AND', $get['search']);
             $queryArray["query_string"]["fields"] = ["name", "alternateName", "author.person.name", "author.organization.name", "about", "source", "description", "vinculo.lattes_id", "vinculo.nome"];
         } else {
             $queryArray["query_string"]["query"] = "*";
